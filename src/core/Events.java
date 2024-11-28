@@ -26,6 +26,14 @@ public class Events {
         System.out.println("Nothing is happening right now");
         //tell the player if you want to use an item
         //use an item or just skip
+        System.out.println("Do you want to use an item from your inventory?")
+        Scanner scanner = new Scanner(System.in);
+        String choice = scanner.nextLine();
+        if (choice.equals("y")) {
+            //choose the item to use and select it
+        } else {
+            System.out.println("Ok that's fine");
+        }
     }
 
 
@@ -35,7 +43,12 @@ public class Events {
         String choice = scanner.nextLine();
         if (choice.equals("y")) {
             //choose another event as weapon/item found or takeDamage
-            weaponFound();
+        	int choice= random.nextInt(2);
+        	switch(choice) {
+        	case 0 -> weaponFound(player);
+        	case 1 -> itemFound(player);
+        	case 2 -> trapFound(player);
+        	}
         } else {
             System.out.println("You ran like a pussy.");
         }
@@ -59,16 +72,16 @@ public class Events {
 
     private static void escape(Player MC, Player NPC) {
         //You have a chance to be seen by the other player and take damage on his weapon
-
-        //if (mc.getStamina()>val)
-        //stamina--;
-        //else {
-        //	//no escape take damage
-        //	takeDamage(15);
-        //}
+    	int staminaLoss= random.nextInt(50);
+        if (MC.getStamina()>10)
+        mc.stamina=-staminaLoss;
+        else {
+        //no escape take damage
+        NPC.attack(MC);
+        }
     }
 
-    public static void weaponFound() {
+    public static void weaponFound(Player player) {
         System.out.println("You found a weapon!!!");
         Scanner scanner = new Scanner(System.in);
 
@@ -83,7 +96,7 @@ public class Events {
         }
     }
 
-    public static void itemFound() {
+    public static void itemFound(PLayer player) {
         System.out.println("You found an item!!!");
         ////show what item has been found
         //if (player.getNumItems() <= 5) {
@@ -102,12 +115,12 @@ public class Events {
     public static void outOfSafeZone(Player player) {
         System.out.println("taking damage from the storm!!!");
 
-        while (inTheStorm) {
-            player.takeDamage(20);
+        player.takeDamage(20);
 
-            //if the player has a stamina>val can escape so inTheStorm= false
-            //otherwise you will take damage every round if outofsafezone is on
-        }
+       //if the player has a stamina>val can escape so inTheStorm= false
+       //otherwise you will take damage every round if outofsafezone is on
+        //this part has to be in game flow during rounds
+        
 
     }
 
