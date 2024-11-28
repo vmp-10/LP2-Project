@@ -3,6 +3,7 @@ package characters;
 import tools.Item;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Player {
     protected String name;
@@ -10,27 +11,37 @@ public class Player {
     protected int armor;
     protected int stamina;
     protected double strength;
-    protected Item[] items;
+    protected List<Item> items;
 
-    public static final ArrayList<Player> preMadePlayers = new ArrayList<>();
+    public static final List<Player> preMadePlayers = new ArrayList<>();
 
     static {
-        preMadePlayers.add(new Player("Trump", 100, 150, 100, 0.9, new Item[0]));
-        preMadePlayers.add(new Player("Bush", 100, 100, 150, 0.9, new Item[0]));
-        preMadePlayers.add(new Player("Jamal", 100, 100, 175, 0.8, new Item[0]));
-        preMadePlayers.add(new Player("Barack", 100, 120, 125, 0.9, new Item[0]));
-        preMadePlayers.add(new Player("Kamala", 75, 120, 100, 0.7, new Item[0]));
-        preMadePlayers.add(new Player("Joe", 50, 95, 50, 0.5, new Item[0]));
+        createPreMadePlayers();
     }
 
-    public Player(String name, int health, int armor, int stamina, double strength, Item[] items) {
+    private static void createPreMadePlayers() {
+        preMadePlayers.add(new Player("Trump", 100, 150, 100, 0.9));
+        preMadePlayers.add(new Player("Bush", 100, 100, 150, 0.9));
+        preMadePlayers.add(new Player("Jamal", 100, 100, 175, 0.8));
+        preMadePlayers.add(new Player("Barack", 100, 120, 125, 0.9));
+        preMadePlayers.add(new Player("Kamala", 75, 120, 100, 0.7));
+        preMadePlayers.add(new Player("Joe", 50, 95, 50, 0.5));
+    }
+
+    public Player(String name, int health, int armor, int stamina, double strength, List<Item> items) {
         this.name = name;
         this.health = health;
         this.armor = armor;
         this.stamina = stamina;
         this.strength = strength;
-        this.items = new Item[0];
+        this.items = items == null ? new ArrayList<>() : new ArrayList<>(items);
     }
+
+
+    public Player(String name, int health, int armor, int stamina, double strength) {
+        this(name, health, armor, stamina, strength, new ArrayList<>());
+    }
+
 
     public void setName(String name) {
         this.name = name;
@@ -59,6 +70,10 @@ public class Player {
     public int getStamina() {
         return stamina;
     }
+    public List<Item> getItems(){
+        return items;
+    }
+
     public double getStrength() {
         return strength;
     }
@@ -68,7 +83,11 @@ public class Player {
     }
 
     public boolean hasItems() {
-        return items.length > 0;
+        return !items.isEmpty();
+    }
+
+    public void removeItem(int i){
+        items.remove(i);
     }
 
     public void takeDamage(int damage) {

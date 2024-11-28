@@ -4,6 +4,7 @@ import common.AppConstants;
 import common.FileUtils;
 import common.LoggingManager;
 import core.Events;
+import tools.Item;
 
 import java.io.File;
 import java.util.*;
@@ -37,8 +38,6 @@ public class Main {
         LoggingManager loggingManager = LoggingManager.getInstance();
         loggingManager.setLoggingLevel(Level.ALL);
         loggingManager.disableLogging();
-
-
         DEBUG_LOGGER.info("Application started.");
 
         Scanner scanner = new Scanner(System.in);
@@ -50,7 +49,7 @@ public class Main {
 
             switch (input.trim()) {
                 case "1": {
-                    DEBUG_LOGGER.info("core.Game started.");
+                    DEBUG_LOGGER.info("Game started.");
 
                     /*
                      * Allows you to select a number of players (Max 150)
@@ -127,16 +126,37 @@ public class Main {
 
                     ArrayList<Player> players = new ArrayList<>(); //will keep all player. Human is pos 0
                     generatePlayers(numNPCs, players, characterChoice);
+                    Player winner = null;
 
                     //Start game, game runs on a turn system
-                    for (int i = 0; i < players.size(); i++) {
-                        //If has item, event to use it.
+                    boolean gameRunning = true;
 
+                    while (gameRunning){
+                        for (int i = 0; i < players.size(); i++) {
+                            //Human's turn
+                            if (i == 0) {
+                                Player mc = players.getFirst();
+                                //If player has an item, event to use it.
+                                if (mc.hasItems()) {
+                                    List<Item> items = mc.getItems();
+                                    System.out.println(AppConstants.displayItems(items.size(), items));
+                                }
+                                //If chooses not to or doesn't use it, event
+                                generateEvent(players, i);
+                            }
 
-                        //If chooses not to or doesn't use it, event
-                        generateEvent(players, i);
+                            //If chooses not to or doesn't use it, event
+                            generateEvent(players, i);
+
+                            if (players.size() == 1) {
+                                winner = players.get(i);
+                                gameRunning = false;
+                            }
+                        }
+                        System.out.println(AppConstants.STAR_DIVIDER);
+                        System.out.println(AppConstants.CROWN);
+                        System.out.println(AppConstants.createHeader("Winner is ") + winner.getName() + "!");
                     }
-
                 }
                 break;
                 case "2": {
