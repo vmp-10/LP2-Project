@@ -12,9 +12,20 @@ import java.util.logging.Logger;
 public class Main {
     private static final Logger DEBUG_LOGGER = LoggingManager.getInstance().getLogger();
 
+    private static void generatePlayers(int numNPCs, ArrayList<Player> players, int characterChoice) {
+        Random random = new Random();
+        for (int i = 0; i < numNPCs; i++) {
+            if (i == 0) {
+                players.add(Player.preMadePlayers.get(characterChoice));
+            } else {
+                players.add(Player.preMadePlayers.get(random.nextInt(0, 5)));
+            }
+        }
+    }
+
     public static void generateEvent(ArrayList<Player> players, int index) {
         Random random = new Random();
-        int event = random.nextInt(10);
+        int event = random.nextInt(0,7);
         switch (event) {
             //If trap placed, event that kills random player can be active
             case 0 -> Events.enemyFound(players.get(index), players.get(random.nextInt(players.size())));
@@ -23,9 +34,8 @@ public class Main {
             case 3 -> Events.trapFound(players.get(index));
             case 4 -> Events.outOfSafeZone(players.get(index));
             case 5 -> Events.dropLandedNearby(players.get(index));
-            case 6 -> Events.allQuiet();
+            case 6 -> Events.allQuiet(players.get(index));
             case 7 -> Events.takeDamage(players.get(index), 10);
-            default -> System.out.println("Wrong input");
         }
     }
 
@@ -57,76 +67,130 @@ public class Main {
                      * 3. Choose human character, NPC will be restricted to difficulty's characters
                      * */
 
-                    System.out.print(AppConstants.createHeader("Choose number of players between 50 and 150: "));
-                    int numNPCs = 0;
-                    boolean validInput = false;
-
-                    while (!validInput) {
-                        try {
-                            input = scanner.nextLine();
-                            numNPCs = Integer.parseInt(input);
-
-                            if (numNPCs >= 50 && numNPCs <= 150) {
-                                validInput = true;
-                            } else {
-                                System.out.print("Invalid input. Please enter a number between 50 and 150: ");
-                            }
-                        } catch (NumberFormatException e) {
-                            System.out.print("Invalid input. Please enter a valid integer: ");
-                        }
-                    }
-
-
-                    validInput = false;
-                    int difficulty = 0;
-
-                    System.out.print(AppConstants.createHeader("Choose difficulty: "));
-                    System.out.print(AppConstants.DIFFICULTY);
-
-                    while (!validInput) {
-                        try {
-                            input = scanner.nextLine();
-                            difficulty = Integer.parseInt(input);
-                            if (difficulty >= 1 && difficulty <= 5) {
-                                validInput = true;
-                            } else {
-                                System.out.print("Invalid input. Please enter a number between 1 and 5: ");
-                            }
-                        } catch (NumberFormatException e) {
-                            System.out.print("Invalid input. Please enter a valid integer for the difficulty: ");
-                        }
-                    }
-
-                    validInput = false;
-
-                    System.out.print(AppConstants.createHeader("Choose character: "));
-                    System.out.print(AppConstants.CHARACTERS);
+                    boolean confirmed = false; //Make sure player desires his options
 
                     int characterChoice = 0;
+                    int numNPCs = 0;
+                    int difficulty;
 
-                    while (!validInput) {
-                        try {
-                            input = scanner.nextLine();
-                            characterChoice = Integer.parseInt(input);
-                            validInput = true;
-                        } catch (NumberFormatException e) {
-                            System.out.print("Invalid input. Please enter a valid integer for the character choice: ");
+                    while (!confirmed) {
+                        System.out.print(AppConstants.createSelection("Choose number of players between 50 and 150: "));
+                        numNPCs = 0;
+                        boolean validInput = false;
+
+                        while (!validInput) {
+                            try {
+                                input = scanner.nextLine();
+                                numNPCs = Integer.parseInt(input);
+
+                                if (numNPCs >= 50 && numNPCs <= 150) {
+                                    validInput = true;
+                                } else {
+                                    System.out.print("Invalid input. Please enter a number between 50 and 150: ");
+                                }
+                            } catch (NumberFormatException e) {
+                                System.out.print("Invalid input. Please enter a valid integer: ");
+                            }
+                        }
+
+                        validInput = false;
+                        difficulty = 0;
+
+                        System.out.print(AppConstants.createHeader("Choose difficulty: "));
+                        System.out.print(AppConstants.DIFFICULTY);
+
+                        while (!validInput) {
+                            try {
+                                input = scanner.nextLine();
+                                difficulty = Integer.parseInt(input);
+                                if (difficulty >= 1 && difficulty <= 5) {
+                                    validInput = true;
+                                } else {
+                                    System.out.print("Invalid input. Please enter a number between 1 and 5: ");
+                                }
+                            } catch (NumberFormatException e) {
+                                System.out.print("Invalid input. Please enter a valid integer for the difficulty: ");
+                            }
+                        }
+
+                        validInput = false;
+
+                        characterChoice = 0;
+
+                        while (!validInput) {
+                            try {
+                                System.out.print(AppConstants.createHeader("Choose character: "));
+                                switch (difficulty) {
+                                    case 1: {
+                                        System.out.print(AppConstants.CHARACTERS_EASY);
+                                    }
+                                    break;
+                                    case 2: {
+                                        System.out.print(AppConstants.CHARACTERS_NORMAL);
+                                    }
+                                    break;
+                                    case 3: {
+                                        System.out.print(AppConstants.CHARACTERS_HARD);
+                                    }
+                                    break;
+                                    case 4: {
+                                        System.out.print(AppConstants.CHARACTERS_JOE_MUST_DIE);
+                                    }
+                                    break;
+                                    case 5: {
+                                        System.out.print(AppConstants.CHARACTERS_CUSTOM);
+                                    }
+                                    break;
+                                    default: {
+                                        System.out.print("Invalid difficulty level. Please choose a valid difficulty.");
+                                    }
+                                    break;
+                                }
+                                input = scanner.nextLine();
+                                characterChoice = Integer.parseInt(input);
+                                validInput = true;
+                            } catch (NumberFormatException e) {
+                                System.out.print("Invalid input. Please enter a valid integer for the character choice: ");
+                            }
+                        }
+
+                        System.out.print(AppConstants.createHeader("You selected: "));
+                        System.out.println("Number of players: " + numNPCs);
+                        System.out.println("Difficulty: " + "Difficulty"); //TODO: Display difficulty, not number
+                        System.out.println("Character choice: " + "Character Name"); //TODO: Display Character name
+
+                        validInput = false;
+                        System.out.print(AppConstants.createSelection("Are you sure of these options [y/n]: "));
+
+                        while (!validInput) {
+                            try {
+                                input = scanner.nextLine();
+
+                                if (input.toLowerCase().equals("y")) {
+                                    confirmed = true;  // Exit the loop if 'y' is selected
+                                    validInput = true; // Exit this inner loop
+                                } else if (input.toLowerCase().equals("n")) {
+                                    System.out.println("Restarting the selection process.");
+                                    validInput = true; // Exit this inner loop and restart the process
+                                    break; // Break the inner loop to start over
+                                } else {
+                                    System.out.print("Invalid input. Please enter a valid answer [y/n]: ");
+                                }
+                            } catch (InputMismatchException e) {
+                                System.out.print("Invalid input. Please enter a valid answer [y/n]: ");
+                            }
                         }
                     }
 
-                    System.out.println(AppConstants.createHeader("You selected: "));
-                    System.out.println("    -> Number of players: " + numNPCs);
-                    System.out.println("    -> Difficulty: " + difficulty);
-                    System.out.println("    -> Character choice: " + characterChoice);
+                    System.out.print(AppConstants.createHeader("Game started, godspeed!"));
 
-                    ArrayList<Player> players = new ArrayList<>(); //will keep all player. Human is pos 0
+                    ArrayList<Player> players = new ArrayList<>(); //Human is getFirst()
                     generatePlayers(numNPCs, players, characterChoice);
-                    //TODO: Player winner = null;
 
                     //Start game, game runs on a turn system
                     boolean gameRunning = true;
 
-                    while (gameRunning){
+                    while (gameRunning) {
                         for (int i = 0; i < players.size(); i++) {
                             //Human's turn
                             if (i == 0) {
@@ -144,7 +208,6 @@ public class Main {
                             generateEvent(players, i);
 
                             if (players.size() == 1) {
-                                //TODO: winner = players.get(i);
                                 gameRunning = false;
                             }
                         }
@@ -155,25 +218,7 @@ public class Main {
                 }
                 break;
                 case "2": {
-                    //List files
-                    // File[] files = FileUtils.listFiles("data");
-
-                    //Choose file
-
-
-                    //Check file
-                    //if (file != null) {
-                    //    List<String> lines = FileUtils.readFile(file);
-                    //    if (!lines.isEmpty()) {
-                    //        DEBUG_LOGGER.info("Loaded file: " + file.getName());
-                    //    } else {
-                    //        DEBUG_LOGGER.info("The selected file is empty. Creating a new one.");
-                    //        //Create game file
-                    //    }
-                    //} else {
-                    //    DEBUG_LOGGER.info("No existing game files located. Creating a new one.");
-                    //    //Create game file
-                    //}
+                    //TODO: Fernando's part
                 }
                 break;
                 case "3": {
@@ -192,18 +237,7 @@ public class Main {
                 break;
             }
         }
-        DEBUG_LOGGER.info("core.Game ended.");
-    }
-
-    private static void generatePlayers(int numNPCs, ArrayList<Player> players, int characterChoice) {
-        Random random = new Random();
-        for (int i = 0; i < numNPCs; i++) {
-            if (i == 0) {
-                players.add(Player.preMadePlayers.get(characterChoice));
-            } else {
-                players.add(Player.preMadePlayers.get(random.nextInt(0, 5)));
-            }
-        }
+        DEBUG_LOGGER.info("Game ended.");
     }
 }
 

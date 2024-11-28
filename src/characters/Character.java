@@ -1,5 +1,6 @@
 package characters;
 
+@Deprecated
 public class Character {
     private int health, armor, stamina;
     private double strength;

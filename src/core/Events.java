@@ -15,6 +15,7 @@ public class Events {
 
     }
 
+    //TODO: Every time you have a user input, make sure to surround it in a surround and catch so it cannot break code
 
     public static void takeDamage(Player player, int maxDamage) {
         int damage = random.nextInt(maxDamage) + 1; // Damage between 1 and maxDamage
@@ -22,17 +23,20 @@ public class Events {
         System.out.println(player.getName() + " took " + damage + " damage! Current health: " + player.getHealth());
     }
 
-    public static void allQuiet() {
+    public static void allQuiet(Player player) {
         System.out.println("Nothing is happening right now");
-        //tell the player if you want to use an item
-        //use an item or just skip
-        System.out.println("Do you want to use an item from your inventory?");
-        Scanner scanner = new Scanner(System.in);
-        String choice = scanner.nextLine();
-        if (choice.equals("y")) {
-            //choose the item to use and select it
-        } else {
-            System.out.println("You did nothing.");
+
+        if (player.hasItems()) {
+            System.out.println("Do you want to use an item from your inventory?");
+
+            Scanner scanner = new Scanner(System.in);
+            String choice = scanner.nextLine();
+
+            if (choice.equals("y")) {
+                //choose the item to use and select it
+            } else {
+                System.out.println("You did nothing.");
+            }
         }
     }
 
@@ -57,10 +61,10 @@ public class Events {
     }
 
     public static void enemyFound(Player MC, Player NPC) {
-        System.out.println("do you want to fight (f) or escape (e)? ");
+        System.out.print("Do you want to fight [y/n]? ");
         Scanner scanner = new Scanner(System.in);
         String choice = scanner.nextLine();
-        if (choice.equals("f")) {
+        if (choice.toLowerCase().equals("y")) {
             fight(MC, NPC);
         } else {
             escape(MC, NPC);

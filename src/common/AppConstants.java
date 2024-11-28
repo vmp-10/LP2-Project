@@ -24,15 +24,34 @@ public final class AppConstants {
             %s
             Option:\s""".formatted(STAR_DIVIDER, STAR_DIVIDER, EQUALS_DIVIDER);
 
-    public static final String CHARACTERS = """
+    public static final String CHARACTERS_EASY = """
             1. Trump   -> [HP 100, ARMOR 150, STAMINA 100, STRENGTH 0.9]
             2. Bush    -> [HP 100, ARMOR 100, STAMINA 150, STRENGTH 0.9]
-            3. Jamal   -> [HP 100, ARMOR 100, STAMINA 175, STRENGTH 0.8]
-            4. Barack  -> [HP 100, ARMOR 120, STAMINA 125, STRENGTH 0.9]
-            5. Kamala  -> [HP 75, ARMOR 120, STAMINA 100, STRENGTH 0.7]
-            6. Joe     -> [HP 50, ARMOR 95, STAMINA 50, STRENGTH 0.5]
             %s
             Option:\s""".formatted(EQUALS_DIVIDER);
+
+    public static final String CHARACTERS_NORMAL = """
+            1. Jamal   -> [HP 100, ARMOR 100, STAMINA 175, STRENGTH 0.8]
+            2. Barack  -> [HP 100, ARMOR 120, STAMINA 125, STRENGTH 0.9]
+            %s
+            Option:\s""".formatted(EQUALS_DIVIDER);
+
+    public static final String CHARACTERS_HARD = """
+            1. Kamala  -> [HP 75, ARMOR 120, STAMINA 100, STRENGTH 0.7]
+            %s
+            Option:\s""".formatted(EQUALS_DIVIDER);
+
+    public static final String CHARACTERS_JOE_MUST_DIE = """
+            1. Joe     -> [HP 50, ARMOR 95, STAMINA 50, STRENGTH 0.5]
+            %s
+            Option:\s""".formatted(EQUALS_DIVIDER);
+
+    public static final String CHARACTERS_CUSTOM = """
+            1. Empty     -> [HP 0, ARMOR 0, STAMINA 0, STRENGTH 0.0]
+            %s
+            Option:\s""".formatted(EQUALS_DIVIDER);
+
+
 
     public static final String DIFFICULTY = """
             1. Easy Mode
@@ -51,6 +70,15 @@ public final class AppConstants {
                 %s
                 """.formatted(EQUALS_DIVIDER, title, EQUALS_DIVIDER);
     }
+
+    public static String createSelection(String title) {
+        return """
+                %s
+                %s
+                %s
+                Option:\s""".formatted(EQUALS_DIVIDER, title, EQUALS_DIVIDER);
+    }
+
 
     public static final String CROWN = """
             ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
