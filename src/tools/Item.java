@@ -21,7 +21,7 @@ public abstract class Item {
         return name;
     }
 
-    public abstract void useItem(); // Abstract to be implemented by subclasses
+    public abstract void useItem(); // TODO: Abstract to be implemented by subclasses
 
     public static void add(Item item) {
         items.add(item);

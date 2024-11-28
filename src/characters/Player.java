@@ -34,6 +34,8 @@ public class Player {
         this.armor = armor;
         this.stamina = stamina;
         this.strength = strength;
+
+        //Items if null are new arraylist, if not arraylist with items
         this.items = items == null ? new ArrayList<>() : new ArrayList<>(items);
     }
 

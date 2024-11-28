@@ -26,31 +26,33 @@ public class Events {
         System.out.println("Nothing is happening right now");
         //tell the player if you want to use an item
         //use an item or just skip
-        System.out.println("Do you want to use an item from your inventory?")
+        System.out.println("Do you want to use an item from your inventory?");
         Scanner scanner = new Scanner(System.in);
         String choice = scanner.nextLine();
         if (choice.equals("y")) {
             //choose the item to use and select it
         } else {
-            System.out.println("Ok that's fine");
+            System.out.println("You did nothing.");
         }
     }
 
 
-    public static void dropLandedNearby() {
+    public static void dropLandedNearby(Player player) {
         System.out.println("A drop is landed nearby, want to loot it?");
+
         Scanner scanner = new Scanner(System.in);
         String choice = scanner.nextLine();
+
         if (choice.equals("y")) {
             //choose another event as weapon/item found or takeDamage
-        	int choice= random.nextInt(2);
-        	switch(choice) {
-        	case 0 -> weaponFound(player);
-        	case 1 -> itemFound(player);
-        	case 2 -> trapFound(player);
-        	}
+            int option = random.nextInt(3);
+            switch (option) {
+                case 0 -> weaponFound(player);
+                case 1 -> itemFound(player);
+                case 2 -> trapFound(player);
+            }
         } else {
-            System.out.println("You ran like a pussy.");
+            System.out.println("You ran away.");
         }
     }
 
@@ -72,12 +74,13 @@ public class Events {
 
     private static void escape(Player MC, Player NPC) {
         //You have a chance to be seen by the other player and take damage on his weapon
-    	int staminaLoss= random.nextInt(50);
-        if (MC.getStamina()>10)
-        mc.stamina=-staminaLoss;
+        int staminaLoss = random.nextInt(50);
+        int stamina = MC.getStamina();
+        if (stamina > 10)
+            MC.setStamina(stamina - staminaLoss);
         else {
-        //no escape take damage
-        NPC.attack(MC);
+            //no escape take damage
+            NPC.attack(MC);
         }
     }
 
@@ -86,7 +89,8 @@ public class Events {
         Scanner scanner = new Scanner(System.in);
 
         //show what weapon has been found
-        System.out.println("do you want to pick " + "NAME OF THE WEAPON" + "up? (y/n)");
+        System.out.println("Do you want to pick " + "NAME OF THE WEAPON" + "up? (y/n)");
+        //TODO: Show difference in stats, you need Javi's part done for that
         String choice = scanner.nextLine();
 
         if (Objects.equals(choice, "y")) {
@@ -96,19 +100,21 @@ public class Events {
         }
     }
 
-    public static void itemFound(PLayer player) {
+    public static void itemFound(Player player) {
         System.out.println("You found an item!!!");
-        ////show what item has been found
-        //if (player.getNumItems() <= 5) {
-        //}
-        ////add the item to the player inventory
-        //else {
-        //    //let the player choose if want to change an item with the new one or just leave it there
-        //}
+        //show what item has been found
+        if (player.getItems().size() <= 5) {
+
+        }
+        //add the item to the player inventory
+        else {
+            //let the player choose if want to change an item with the new one or just leave it there
+        }
     }
 
     public static void trapFound(Player player) {
         System.out.println("There is a trap, taking damage!!!");
+        //TODO: Implement a random 50/50 to take damage or not
         player.takeDamage(20);
     }
 
@@ -117,11 +123,8 @@ public class Events {
 
         player.takeDamage(20);
 
-       //if the player has a stamina>val can escape so inTheStorm= false
-       //otherwise you will take damage every round if outofsafezone is on
+        //if the player has a stamina>val can escape so inTheStorm= false
+        //otherwise you will take damage every round if outofsafezone is on
         //this part has to be in game flow during rounds
-        
-
     }
-
 }

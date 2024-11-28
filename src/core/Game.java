@@ -5,6 +5,7 @@ import characters.NPC;
 
 import java.util.ArrayList;
 
+@Deprecated
 public class Game {
     private final int difficulty, numNPCs;
     private final MC playableCharacter;

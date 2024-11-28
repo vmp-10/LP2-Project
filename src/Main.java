@@ -1,12 +1,9 @@
-import characters.Character;
 import characters.Player;
 import common.AppConstants;
-import common.FileUtils;
 import common.LoggingManager;
 import core.Events;
 import tools.Item;
 
-import java.io.File;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,8 +11,6 @@ import java.util.logging.Logger;
 
 public class Main {
     private static final Logger DEBUG_LOGGER = LoggingManager.getInstance().getLogger();
-    private static final Logger GAME_LOGGER = LoggingManager.getInstance().getLogger(); //Used for saving logs on file
-
 
     public static void generateEvent(ArrayList<Player> players, int index) {
         Random random = new Random();
@@ -23,11 +18,11 @@ public class Main {
         switch (event) {
             //If trap placed, event that kills random player can be active
             case 0 -> Events.enemyFound(players.get(index), players.get(random.nextInt(players.size())));
-            case 1 -> Events.weaponFound();
-            case 2 -> Events.itemFound();
+            case 1 -> Events.weaponFound(players.get(index));
+            case 2 -> Events.itemFound(players.get(index));
             case 3 -> Events.trapFound(players.get(index));
             case 4 -> Events.outOfSafeZone(players.get(index));
-            case 5 -> Events.dropLandedNearby();
+            case 5 -> Events.dropLandedNearby(players.get(index));
             case 6 -> Events.allQuiet();
             case 7 -> Events.takeDamage(players.get(index), 10);
             default -> System.out.println("Wrong input");
@@ -126,7 +121,7 @@ public class Main {
 
                     ArrayList<Player> players = new ArrayList<>(); //will keep all player. Human is pos 0
                     generatePlayers(numNPCs, players, characterChoice);
-                    Player winner = null;
+                    //TODO: Player winner = null;
 
                     //Start game, game runs on a turn system
                     boolean gameRunning = true;
@@ -136,7 +131,7 @@ public class Main {
                             //Human's turn
                             if (i == 0) {
                                 Player mc = players.getFirst();
-                                //If player has an item, event to use it.
+                                //If player has an item, displays option to use them.
                                 if (mc.hasItems()) {
                                     List<Item> items = mc.getItems();
                                     System.out.println(AppConstants.displayItems(items.size(), items));
@@ -149,19 +144,19 @@ public class Main {
                             generateEvent(players, i);
 
                             if (players.size() == 1) {
-                                winner = players.get(i);
+                                //TODO: winner = players.get(i);
                                 gameRunning = false;
                             }
                         }
                         System.out.println(AppConstants.STAR_DIVIDER);
                         System.out.println(AppConstants.CROWN);
-                        System.out.println(AppConstants.createHeader("Winner is ") + winner.getName() + "!");
+                        System.out.println(AppConstants.createHeader("Winner is ") + "Winner name" + "!");
                     }
                 }
                 break;
                 case "2": {
                     //List files
-                    File[] files = FileUtils.listFiles("data");
+                    // File[] files = FileUtils.listFiles("data");
 
                     //Choose file
 
