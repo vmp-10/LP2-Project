@@ -38,6 +38,7 @@ public final class AppConstants {
 
     public static final String CHARACTERS_HARD = """
             1. Kamala  -> [HP 75, ARMOR 120, STAMINA 100, STRENGTH 0.7]
+            2. Lincoln  -> [HP 75, ARMOR 100, STAMINA 80, STRENGTH 0.6]
             %s
             Option:\s""".formatted(EQUALS_DIVIDER);
 
@@ -50,7 +51,6 @@ public final class AppConstants {
             1. Empty     -> [HP 0, ARMOR 0, STAMINA 0, STRENGTH 0.0]
             %s
             Option:\s""".formatted(EQUALS_DIVIDER);
-
 
 
     public static final String DIFFICULTY = """
@@ -66,7 +66,7 @@ public final class AppConstants {
     public static String createHeader(String title) {
         return """
                 %s
-                %s:
+                %s
                 %s
                 """.formatted(EQUALS_DIVIDER, title, EQUALS_DIVIDER);
     }
@@ -104,16 +104,19 @@ public final class AppConstants {
     public static String displayItems(int numItems, List<Item> items) {
         StringBuilder itemList = new StringBuilder();
 
+        int last = 0;
         for (int i = 1; i <= numItems; i++) {
             itemList.append(i).append(". " + items.get(i) + "\n");
+            last = i;
         }
 
         return """
-            %s
-            You have %d items:
-            %s
-            %s
-            """.formatted(EQUALS_DIVIDER, numItems, itemList.toString().trim(), EQUALS_DIVIDER);
+                %s
+                You have %d items:
+                %s
+                %d. Don't use any item. 
+                %s
+                """.formatted(EQUALS_DIVIDER, numItems, itemList.toString().trim(), last, EQUALS_DIVIDER);
     }
 
 }

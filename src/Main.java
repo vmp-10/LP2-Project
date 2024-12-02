@@ -12,20 +12,25 @@ import java.util.logging.Logger;
 public class Main {
     private static final Logger DEBUG_LOGGER = LoggingManager.getInstance().getLogger();
 
-    private static void generatePlayers(int numNPCs, ArrayList<Player> players, int characterChoice) {
+
+    private static void generatePlayers(int numNPCs, ArrayList<Player> players, int characterChoice, String difficulty) {
         Random random = new Random();
-        for (int i = 0; i < numNPCs; i++) {
-            if (i == 0) {
-                players.add(Player.preMadePlayers.get(characterChoice));
-            } else {
-                players.add(Player.preMadePlayers.get(random.nextInt(0, 5)));
-            }
+        List<Player> availablePlayers = Player.preMadePlayers.get(difficulty);
+
+        // Add the user's chosen character
+        Player chosenPlayer = availablePlayers.get(characterChoice - 1);
+        players.add(chosenPlayer);
+
+        // Add random NPCs
+        for (int i = 1; i < numNPCs; i++) {
+            Player randomPlayer = availablePlayers.get(random.nextInt(availablePlayers.size()));
+            players.add(randomPlayer);
         }
     }
 
     public static void generateEvent(ArrayList<Player> players, int index) {
         Random random = new Random();
-        int event = random.nextInt(0,7);
+        int event = random.nextInt(7);
         switch (event) {
             //If trap placed, event that kills random player can be active
             case 0 -> Events.enemyFound(players.get(index), players.get(random.nextInt(players.size())));
@@ -45,6 +50,8 @@ public class Main {
         loggingManager.disableLogging();
         DEBUG_LOGGER.info("Application started.");
 
+        String[] difficulties = {"Easy", "Normal", "Hard", "Joe Must Die", "Custom"};
+
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
 
@@ -54,6 +61,8 @@ public class Main {
 
             switch (input.trim()) {
                 case "1": {
+
+
                     DEBUG_LOGGER.info("Game started.");
 
                     /*
@@ -71,7 +80,8 @@ public class Main {
 
                     int characterChoice = 0;
                     int numNPCs = 0;
-                    int difficulty;
+                    int difficultyChoice = 0;
+                    String difficulty = null;
 
                     while (!confirmed) {
                         System.out.print(AppConstants.createSelection("Choose number of players between 50 and 150: "));
@@ -94,7 +104,6 @@ public class Main {
                         }
 
                         validInput = false;
-                        difficulty = 0;
 
                         System.out.print(AppConstants.createHeader("Choose difficulty: "));
                         System.out.print(AppConstants.DIFFICULTY);
@@ -102,8 +111,8 @@ public class Main {
                         while (!validInput) {
                             try {
                                 input = scanner.nextLine();
-                                difficulty = Integer.parseInt(input);
-                                if (difficulty >= 1 && difficulty <= 5) {
+                                difficultyChoice = Integer.parseInt(input);
+                                if (difficultyChoice >= 1 && difficultyChoice <= 5) {
                                     validInput = true;
                                 } else {
                                     System.out.print("Invalid input. Please enter a number between 1 and 5: ");
@@ -115,49 +124,52 @@ public class Main {
 
                         validInput = false;
 
-                        characterChoice = 0;
+                        System.out.print(AppConstants.createHeader("Choose character: "));
+                        switch (difficultyChoice) {
+                            case 1: {
+                                System.out.print(AppConstants.CHARACTERS_EASY);
+                            }
+                            break;
+                            case 2: {
+                                System.out.print(AppConstants.CHARACTERS_NORMAL);
+                            }
+                            break;
+                            case 3: {
+                                System.out.print(AppConstants.CHARACTERS_HARD);
+                            }
+                            break;
+                            case 4: {
+                                System.out.print(AppConstants.CHARACTERS_JOE_MUST_DIE);
+                            }
+                            break;
+                            case 5: {
+                                System.out.print(AppConstants.CHARACTERS_CUSTOM);
+                            }
+                            break;
+                        }
 
+                        difficulty = difficulties[difficultyChoice - 1];
                         while (!validInput) {
                             try {
-                                System.out.print(AppConstants.createHeader("Choose character: "));
-                                switch (difficulty) {
-                                    case 1: {
-                                        System.out.print(AppConstants.CHARACTERS_EASY);
-                                    }
-                                    break;
-                                    case 2: {
-                                        System.out.print(AppConstants.CHARACTERS_NORMAL);
-                                    }
-                                    break;
-                                    case 3: {
-                                        System.out.print(AppConstants.CHARACTERS_HARD);
-                                    }
-                                    break;
-                                    case 4: {
-                                        System.out.print(AppConstants.CHARACTERS_JOE_MUST_DIE);
-                                    }
-                                    break;
-                                    case 5: {
-                                        System.out.print(AppConstants.CHARACTERS_CUSTOM);
-                                    }
-                                    break;
-                                    default: {
-                                        System.out.print("Invalid difficulty level. Please choose a valid difficulty.");
-                                    }
-                                    break;
-                                }
+                                List<Player> availablePlayers = Player.preMadePlayers.get(difficulty);
+
                                 input = scanner.nextLine();
                                 characterChoice = Integer.parseInt(input);
-                                validInput = true;
+
+                                if (characterChoice > 0 && characterChoice <= availablePlayers.size()) {
+                                    validInput = true;
+                                } else {
+                                    System.out.print("Invalid input. Please select a valid option: ");
+                                }
                             } catch (NumberFormatException e) {
                                 System.out.print("Invalid input. Please enter a valid integer for the character choice: ");
                             }
                         }
 
-                        System.out.print(AppConstants.createHeader("You selected: "));
+                        System.out.println(AppConstants.STAR_DIVIDER);
                         System.out.println("Number of players: " + numNPCs);
-                        System.out.println("Difficulty: " + "Difficulty"); //TODO: Display difficulty, not number
-                        System.out.println("Character choice: " + "Character Name"); //TODO: Display Character name
+                        System.out.println("Difficulty: " + difficulty);
+                        System.out.println("Character choice: " + Player.preMadePlayers.get(difficulty).get(characterChoice - 1).getName());
 
                         validInput = false;
                         System.out.print(AppConstants.createSelection("Are you sure of these options [y/n]: "));
@@ -170,7 +182,7 @@ public class Main {
                                     confirmed = true;  // Exit the loop if 'y' is selected
                                     validInput = true; // Exit this inner loop
                                 } else if (input.toLowerCase().equals("n")) {
-                                    System.out.println("Restarting the selection process.");
+                                    System.out.println("Restarting the game creation process.");
                                     validInput = true; // Exit this inner loop and restart the process
                                     break; // Break the inner loop to start over
                                 } else {
@@ -185,27 +197,53 @@ public class Main {
                     System.out.print(AppConstants.createHeader("Game started, godspeed!"));
 
                     ArrayList<Player> players = new ArrayList<>(); //Human is getFirst()
-                    generatePlayers(numNPCs, players, characterChoice);
+                    generatePlayers(numNPCs, players, characterChoice, difficulty);
 
                     //Start game, game runs on a turn system
                     boolean gameRunning = true;
-
                     while (gameRunning) {
                         for (int i = 0; i < players.size(); i++) {
                             //Human's turn
                             if (i == 0) {
-                                Player mc = players.getFirst();
+                                Player human = players.getFirst();
                                 //If player has an item, displays option to use them.
-                                if (mc.hasItems()) {
-                                    List<Item> items = mc.getItems();
+                                if (human.hasItems()) {
+                                    List<Item> items = human.getItems();
                                     System.out.println(AppConstants.displayItems(items.size(), items));
-                                }
-                                //If chooses not to or doesn't use it, event
-                                generateEvent(players, i);
-                            }
+                                    boolean validInput = false;
 
-                            //If chooses not to or doesn't use it, event
-                            generateEvent(players, i);
+                                    while (!validInput) {
+                                        try {
+                                            int itemChoice = scanner.nextInt();
+
+                                            if (itemChoice > items.size() || itemChoice < 0) {
+                                                System.out.print("Insert a valid option: ");
+                                            }
+
+                                            items.get(itemChoice).use();
+
+                                        } catch (NumberFormatException e) {
+                                            System.out.print("Insert a valid option: ");
+                                        }
+                                    }
+
+                                } else {
+                                    //If chooses not to or doesn't use it, event
+                                    generateEvent(players, i);
+                                }
+                            } else {
+                                Player current = players.get(i);
+                                Random random = new Random();
+
+                                //Simulate a 25% to use item
+                                if (current.hasItems() && random.nextInt(4) == 1) {
+                                    List<Item> items = current.getItems();
+                                    Item item = items.get(random.nextInt(0, items.size()));
+                                    item.use();
+                                } else {
+                                    generateEvent(players, i);
+                                }
+                            }
 
                             if (players.size() == 1) {
                                 gameRunning = false;
@@ -213,7 +251,7 @@ public class Main {
                         }
                         System.out.println(AppConstants.STAR_DIVIDER);
                         System.out.println(AppConstants.CROWN);
-                        System.out.println(AppConstants.createHeader("Winner is ") + "Winner name" + "!");
+                        System.out.println(AppConstants.createHeader("Winner is player " + players.get(0).getTag() + " !"));
                     }
                 }
                 break;
@@ -222,7 +260,7 @@ public class Main {
                 }
                 break;
                 case "3": {
-
+                    //TODO: Javi's part
                 }
                 break;
                 case "exit": {

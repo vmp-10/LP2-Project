@@ -16,12 +16,11 @@ public abstract class Item {
     public String getType() {
         return type;
     }
-
     public String getName() {
         return name;
     }
 
-    public abstract void useItem(); // TODO: Abstract to be implemented by subclasses
+    public abstract void use(); // TODO: Abstract to be implemented by subclasses. Delete item on use.
 
     public static void add(Item item) {
         items.add(item);
