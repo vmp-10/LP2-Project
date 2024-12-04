@@ -20,11 +20,14 @@ public class Main {
         // Add the user's chosen character
         Player chosenPlayer = availablePlayers.get(characterChoice - 1);
         players.add(chosenPlayer);
+        
 
         // Add random NPCs
         for (int i = 1; i < numNPCs; i++) {
             Player randomPlayer = availablePlayers.get(random.nextInt(availablePlayers.size()));
             players.add(randomPlayer);
+            
+           
         }
     }
 
@@ -203,9 +206,12 @@ public class Main {
                     boolean gameRunning = true;
                     while (gameRunning) {
                         for (int i = 0; i < players.size(); i++) {
+                        	System.out.println("ROUND: " + i+1);
                             //Human's turn
                             if (i == 0) {
                                 Player human = players.getFirst();
+                                human.setHuman(true); //set the human player as a player so we can see the print from the events methods
+                                System.out.println(human.isHuman());
                                 //If player has an item, displays option to use them.
                                 if (human.hasItems()) {
                                     List<Item> items = human.getItems();
@@ -229,19 +235,19 @@ public class Main {
 
                                 } else {
                                     //If chooses not to or doesn't use it, event
-                                    generateEvent(players, i);
+                                    generateEvent(players, i); //if is a npc this doesn't print anything
                                 }
                             } else {
                                 Player current = players.get(i);
                                 Random random = new Random();
-
+                          
                                 //Simulate a 25% to use item
                                 if (current.hasItems() && random.nextInt(4) == 1) {
                                     List<Item> items = current.getItems();
                                     Item item = items.get(random.nextInt(0, items.size()));
                                     item.use();
                                 } else {
-                                    generateEvent(players, i);
+                                    generateEvent(players, i); //if is a npc this doesn't print anything
                                 }
                             }
 
