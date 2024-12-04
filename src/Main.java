@@ -203,6 +203,7 @@ public class Main {
                     generatePlayers(numNPCs, players, characterChoice, difficulty);
 
                     //Start game, game runs on a turn system
+                    //TODO: check the game flow for the rounds
                     boolean gameRunning = true;
                     while (gameRunning) {
                         for (int i = 0; i < players.size(); i++) {
