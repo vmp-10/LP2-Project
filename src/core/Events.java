@@ -1,253 +1,289 @@
 package core;
 
-import characters.MC;
 import characters.Player;
+import common.AppConstants;
+import tools.Item;
 
-import java.util.Scanner;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.Scanner;
 
-//TODO: Verify if player or NPC, if NPC, no prints nor inputs allowed
+//Verify if player or NPC, if NPC, no prints nor inputs allowed -> FIXED. Replaced isHuman() with getTag, if tag == 0 player is Human.
 public class Events {
+    private static final Random random = new Random();
 
-	private static final Random random = new Random();
-	private static boolean inTheStorm = true;
-	private static Scanner scanner = new Scanner(System.in);
+    private Events() {
 
-	private Events() {
+    }
 
-	}
+    //DONE
+    public static void allQuiet(Player player) {
+        //If player is human he'll be given te choice to use an item
+        //If NPC, nothing happens
+        if (player.getTag() == 0) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Nothing is happening right now.");
 
-	public static void takeDamage(Player player, int maxDamage) {
-		int damage = random.nextInt(maxDamage) + 1; // Damage between 1 and maxDamage
-		player.takeDamage(damage);
-		System.out.println(player.getName() + " took " + damage + " damage! Current health: " + player.getHealth());
-	}
+            if (player.hasItems()) {
+                System.out.println("Do you want to use an item from your inventory? (y/n)");
+                String choice = "";
 
-	public static void allQuiet(Player player) {
-		if (player.isHuman() == true) {
-			System.out.println("Nothing is happening right now");
+                while (true) {
+                    try {
+                        choice = scanner.nextLine().trim().toLowerCase();
 
-			if (player.hasItems()) {
-				System.out.println("Do you want to use an item from your inventory? (y/n)");
+                        if (!choice.equals("y") || !choice.equals("n")) {
+                            throw new IllegalArgumentException("Invalid input. Please enter 'y' or 'n'.");
+                        }
+                        break; // exit the loop is has invalid input
+                    } catch (IllegalArgumentException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
 
-				String choice = "";
+                if (choice.equals("y")) {
+                    List<Item> items = player.getItems();
+                    System.out.println(AppConstants.displayItems(items.size(), items));
+                    boolean validInput = false;
 
-				while (true) {
-					try {
-						choice = scanner.nextLine().trim().toLowerCase();
+                    while (!validInput) {
+                        try {
+                            int itemChoice = scanner.nextInt();
 
-						if (!choice.equals("y") && !choice.equals("n")) {
-							throw new IllegalArgumentException("Invalid input. Please enter 'y' or 'n'.");
-						}
-						break; // exit the loop is has invalid input
-					} catch (IllegalArgumentException e) {
-						System.out.println(e.getMessage());
-					}
-				}
+                            if (itemChoice > items.size() || itemChoice < 0) {
+                                System.out.print("Insert a valid option: ");
+                            }
 
-				if (choice.equals("y")) {
-					// Display items available
-					System.out.println("Displaying available items...");
-					// Logic for choosing and using an item
-				} else {
-					System.out.println("You did nothing.");
-				}
-			}
+                            items.get(itemChoice).use();
 
-		}
-	}
+                        } catch (NumberFormatException e) {
+                            System.out.print("Insert a valid option: ");
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	public static void dropLandedNearby(Player player) {
-		if (player.isHuman() == true) {
-			System.out.println("A drop has landed nearby, do you want to loot it?");
+    public static void dropLandedNearby(Player player) {
+        String choice = "";
+        int NPC_choice = random.nextInt(1);
 
-			String choice = "";
-			while (true) {
-				try {
-					choice = scanner.nextLine().trim().toLowerCase();
+        if (player.getTag() == 0) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("A drop has landed nearby, do you want to loot it?");
 
-					if (!choice.equals("y") && !choice.equals("n")) {
-						throw new IllegalArgumentException("Invalid input. Please enter 'y' or 'n'.");
-					}
-					break; // exit the loop is has invalid input
-				} catch (IllegalArgumentException e) {
-					System.out.println(e.getMessage());
-				}
-			}
+            while (true) {
+                try {
+                    choice = scanner.nextLine().trim().toLowerCase();
 
-			if (choice.equals("y")) {
-				// choose another event as weapon/item found or takeDamage
-				int option = random.nextInt(3);
-				switch (option) {
-				case 0 -> weaponFound(player);
-				case 1 -> itemFound(player);
-				case 2 -> trapFound(player);
-				}
-			} else {
-				System.out.println("You ran away.");
-			}
-		}
-	}
+                    if (!choice.equals("y") || !choice.equals("n")) {
+                        throw new IllegalArgumentException("Invalid input. Please enter 'y' or 'n'.");
+                    }
+                    break; // exit the loop is has invalid input
+                } catch (IllegalArgumentException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+            if (choice.equals("y")) {
+                // choose another event as weapon/item found or takeDamage
+                int option = random.nextInt(3);
+                switch (option) {
+                    case 0 -> weaponFound(player);
+                    case 1 -> itemFound(player);
+                    case 2 -> trapFound(player);
+                }
+            } else {
+                System.out.println("You ran away.");
+            }
 
-	public static void enemyFound(Player MC, Player NPC) {
-	    String choice = "";
-	    System.out.print("You found a player, do you want to fight [y/n]? "); 
-	    while (true) {
-	        try {
-	            choice = scanner.nextLine().trim().toLowerCase();
+        } else {
+            int option = random.nextInt(0, 3);
+            switch (option) {
+                case 0 -> weaponFound(player);
+                case 1 -> itemFound(player);
+                case 2 -> trapFound(player);
+                case 3 -> allQuiet(player);
+            }
+        }
+    }
 
-	            if (!choice.equals("y") && !choice.equals("n")) {
-	                throw new IllegalArgumentException("Invalid input. Please enter 'y' or 'n'.");
-	            }
-	            break; // exit the loop if the input is valid
-	        } catch (IllegalArgumentException e) {
-	            System.out.println(e.getMessage());
-	        }
-	    }
+    //DONE
+    public static void enemyFound(Player player1, Player player2) {
+        if (player1.getTag() == 0) {
 
-	    
-	    if (choice.equals("y")) {
-	        fight(MC, NPC);
-	    } else {
-	        escape(MC, NPC);
-	    }
-	}
+            Scanner scanner = new Scanner(System.in);
+            String choice;
+
+            System.out.print("You found a player, do you want to fight [y/n]? ");
+            while (true) {
+                try {
+                    choice = scanner.nextLine().trim().toLowerCase();
+
+                    if (!choice.equals("y") && !choice.equals("n")) {
+                        throw new IllegalArgumentException("Invalid input. Please enter 'y' or 'n'.");
+                    }
+                    break; // exit the loop if the input is valid
+                } catch (IllegalArgumentException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+
+            if (choice.equals("y")) {
+                fight(player1, player2);
+            } else {
+                escape(player1, player2, true);
+            }
+        } else {
+            int chance = random.nextInt(0, 100);
+            if (chance < 25) {
+                fight(player1, player2);
+            } else {
+                escape(player1, player2, false);
+            }
+        }
+    }
+
+    //DONE
+    private static void fight(Player player1, Player player2) {
+        if (player1.getTag() == 0) {
+            player1.attack(player2, true);
+        } else {
+            player1.attack(player2, false);
+        }
+    }
+
+    //DONE
+    private static void escape(Player player1, Player player2, boolean isHuman) {
+        // You have a chance to be seen by the other player and be attacked
+        int staminaLoss = random.nextInt(2);
+        int stamina = player1.getStamina();
+
+        if (isHuman) {
+            System.out.println("Trying to escape");
+        }
+
+        if (stamina > 5)
+            player1.setStamina(stamina - staminaLoss);
+        else {
+            player2.attack(player1, true); //Couldn't escape, takes tamage
+        }
+    }
 
 
-	private static void fight(Player MC, Player NPC) {
-		// choose the damage depends on the weapons and player stats
-		MC.attack(NPC);
-	}
+    //TODO: add the weapon to the player inventory
+    public static void weaponFound(Player player) {
+        if (player.getTag() == 0) {
+            Scanner scanner = new Scanner(System.in);
 
-	private static void escape(Player MC, Player NPC) {
-		// You have a chance to be seen by the other player and take damage on his
-		// weapon
-		System.out.println("trying to escape!!");
-		int staminaLoss = random.nextInt(2);
-		int stamina = MC.getStamina();
-		if (stamina > 5)
-			MC.setStamina(stamina - staminaLoss);
-		else {
-			// no escape take damage
-			NPC.attack(MC);
-		}
-	}
+            // TODO: Show difference in stats, you need Javi's part done for that
+            System.out.println("You found a weapon, do you want to pick " + "NAME OF THE WEAPON" + "up? (y/n)");
+            System.out.println("DISPLAY OLD AND NEW WEAPON STATS WITH");
+            String choice = "";
+            while (true) {
+                try {
+                    choice = scanner.nextLine().trim().toLowerCase();
 
-	public static void weaponFound(Player player) {
-		if (player.isHuman() == true) {
-			System.out.println("You found a weapon!!!");
+                    if (!choice.equals("y") && !choice.equals("n")) {
+                        throw new IllegalArgumentException("Invalid input. Please enter 'y' or 'n'.");
+                    }
+                    break; // exit the loop is has invalid input
+                } catch (IllegalArgumentException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
 
-			// show what weapon has been found
-			// TODO: Show difference in stats, you need Javi's part done for that
-			System.out.println("Do you want to pick " + "NAME OF THE WEAPON" + "up? (y/n)");
-			String choice = "";
-			while (true) {
-				try {
-					choice = scanner.nextLine().trim().toLowerCase();
+            if (Objects.equals(choice, "y")) {
+                //TODO: Need Javi's part to add weapon
+            } else {
+                // Non-Human Player (NPC) Case
+                // Automatically decide if the NPC will pick up the weapon (e.g., randomly choose "y" or "n")
+                Random random = new Random();
+                boolean NPCchoice = random.nextBoolean();  // Randomly choose between true (y) or false (n)
 
-					if (!choice.equals("y") && !choice.equals("n")) {
-						throw new IllegalArgumentException("Invalid input. Please enter 'y' or 'n'.");
-					}
-					break; // exit the loop is has invalid input
-				} catch (IllegalArgumentException e) {
-					System.out.println(e.getMessage());
-				}
-			}
+                if (NPCchoice) {
+                    // TODO: Need Javi's part to add weapon
+                    // NPC decides to pick up the weapon
+                } else {
+                    // NPC decides not to pick up the weapon
+                }
+            }
+        }
+    }
 
-			if (Objects.equals(choice, "y")) {
-				// add the new weapon to the inventory of the player
-			} else {
-				System.out.println("Ok that's fine, there's your current inventory");
-				// show the inventory to the player
-				// skip an do nothing
-			}
-		}
-	}
+    public static void itemFound(Player player) {
+        if (player.getTag() == 0) {
+            Scanner scanner = new Scanner(System.in);
 
-	public static void itemFound(Player player) {
-		if (player.isHuman() == true) {
-			System.out.println("You found an item!!!");
-			// show what item has been found
-			if (player.getItems().size() <= 5) {
+            System.out.println("You found an item, do you want to pick " + "NAME OF THE ITEM" + "up? (y/n)");
 
-			}
-			// add the item to the player inventory
-			else {
-				// let the player choose if want to change an item with the new one or just
-				// leave it there
-				String choice = "";
-				while (true) {
-					try {
-						choice = scanner.nextLine().trim().toLowerCase();
+            //TODO: Show all items
 
-						if (!choice.equals("y") && !choice.equals("n")) {
-							throw new IllegalArgumentException("Invalid input. Please enter 'y' or 'n'.");
-						}
-						break; // exit the loop is has invalid input
-					} catch (IllegalArgumentException e) {
-						System.out.println(e.getMessage());
-					}
-				}
-				if (choice.equals("y")) {
-					// change item with one of the inventory
-					// TODO: inventory swap
-				} else {
-					System.out.print("Ok that's fine");
-				}
-			}
-		}
-	}
+            String choice = "";
+            while (true) {
+                try {
+                    choice = scanner.nextLine().trim().toLowerCase();
 
-	public static void trapFound(Player player) {
-		if (player.isHuman() == true) {
-			int chanceToTakeDamage = random.nextInt(100) + 1;
-			if (chanceToTakeDamage >= 50) {
-				System.out.println("There is a trap and you fell for it.");
-				player.takeDamage(20);
-			} else {
-				System.out.println("You got lucky and you avoided a trap.");
-			}
-		}
-	}
+                    if (!choice.equals("y") && !choice.equals("n")) {
+                        throw new IllegalArgumentException("Invalid input. Please enter 'y' or 'n'.");
+                    }
+                    break; // exit the loop is has invalid input
+                } catch (IllegalArgumentException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+            if (choice.equals("y")) {
+                // TODO: Item swap, need Javi's part
+            }
+        } else {
+            // Non-Human Player (NPC) Case
+            // Automatically decide if the NPC will pick up the item (e.g., randomly choose "y" or "n")
+            Random random = new Random();
+            boolean NPCchoice = random.nextBoolean();  // Randomly choose between true (y) or false (n)
 
-	public static void outOfSafeZone(Player player) {
-		if (player.isHuman() == true) {
-			System.out.println("taking damage from the storm!!!");
+            if (NPCchoice) {
+                // TODO: Need Javi's part to add item
+            } else {
+                // NPC decides not to pick up the weapon
+            }
+        }
+    }
 
-			player.takeDamage(20);
+    public static void trapFound(Player player) {
+        int chanceToTakeDamage = random.nextInt(0, 100);
+        boolean tookDamage = false;
 
-			// if the player has a stamina>val can escape so inTheStorm= false
-			// otherwise you will take damage every round if outofsafezone is on
-			// TODO: this part has to be in game flow during rounds
-		}
-	}
+        if (chanceToTakeDamage < 25) {
+            tookDamage = true;
+        }
 
-	public static void main(String[] args) {
+        if (player.getTag() == 0) {
+            if (tookDamage) {
+                player.takeDamage(15, true);
+                if (player.getTag() == 0)
+                    System.out.println("There is a trap and you fell for it.");
+            } else {
+                if (player.getTag() == 0)
+                    System.out.println("You got lucky and you avoided a trap.");
+            }
+        } else {
+            player.takeDamage(15, false);
+        }
+    }
 
-		Player player = new Player("Trump", 100, 150, 100, 0.9, true); // you can use Players.preMadePlayers.get()
-		Player npc = new Player("gino", 100, 150, 100, 0.9, false);
-		ArrayList<Player> players = new ArrayList<>();
-		players.add(player);
-		
-		int index = 0;
-		while (true) {
-			Random random = new Random();
-			int event = random.nextInt(7);
-			System.out.println(event);
-			switch (event) {
-			// If trap placed, event that kills random player can be active
-			case 0 -> enemyFound(players.get(index), npc);
-			case 1 -> weaponFound(players.get(index));
-			case 2 -> itemFound(players.get(index));
-			case 3 -> trapFound(players.get(index));
-			case 4 -> outOfSafeZone(players.get(index));
-			case 5 -> dropLandedNearby(players.get(index));
-			case 6 -> allQuiet(players.get(index));
-			case 7 -> takeDamage(players.get(index), 10);
-			}
-		}
-	}
+    //DONE
+    public static void outOfSafeZone(Player player) {
+        int chanceToOutrun = random.nextInt(0, 100);
+        boolean escaped = false;
+        if (chanceToOutrun < 25) {
+            escaped = false;
+        }
+
+        if (player.getTag() == 0) {
+            player.takeDamage(20, true);
+            if (player.getTag() == 0)
+                System.out.println("You're in the storm, taking damage");
+        } else {
+            player.takeDamage(5, true);
+        }
+    }
 }

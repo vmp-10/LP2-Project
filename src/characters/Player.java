@@ -16,9 +16,6 @@ public class Player {
     protected List<Item> items;
     protected int tag;
 
-    // Static counter for unique tags
-    private static int tagCounter = 0;
-
     // HashMap for pre-made players categorized by difficulty
     public static final Map<String, List<Player>> preMadePlayers = new HashMap<>();
 
@@ -37,33 +34,37 @@ public class Player {
         ));
         preMadePlayers.put("Hard", List.of(
                 new Player("Kamala", 75, 120, 100, 0.7),
-                new Player("Joe", 50, 95, 50, 0.5)
+                new Player("Lincoln", 75, 100, 80, 0.6)
         ));
         preMadePlayers.put("Joe Must Die", List.of(
-                new Player("Lincoln", 75, 100, 80, 0.6)
+                new Player("Joe", 50, 95, 50, 0.5)
         ));
     }
 
-    public Player(String name, int health, int armor, int stamina, double strength, List<Item> items) {
+    public Player(String name, int health, int armor, int stamina, double strength, List<Item> items, int tag) {
         this.name = name;
         this.health = health;
         this.armor = armor;
         this.stamina = stamina;
         this.strength = strength;
+        this.tag = tag;
 
-        //Items if null are new arraylist, if not arraylist with items
-        this.items = items == null ? new ArrayList<>() : new ArrayList<>(items);
-        this.tag = tagCounter++;
+        // Initialize items to a new list if null, otherwise copy the existing list
+        this.items = (items == null) ? new ArrayList<>() : new ArrayList<>(items);
     }
-
 
     public Player(String name, int health, int armor, int stamina, double strength) {
-        this(name, health, armor, stamina, strength, new ArrayList<>());
+        this(name, health, armor, stamina, strength, null, -1);
     }
 
-
-    public void setName(String name) {
-        this.name = name;
+    public Player(Player other) {
+        this.name = other.name;
+        this.health = other.health;
+        this.armor = other.armor;
+        this.stamina = other.stamina;
+        this.strength = other.strength;
+        this.tag = other.tag;
+        this.items = new ArrayList<>(other.items);
     }
 
     public void setHealth(int health) {
@@ -74,12 +75,12 @@ public class Player {
         this.armor = armor;
     }
 
-    public void setStamina(int stamina) {
-        this.stamina = stamina;
+    public void setTag(int tag) {
+        this.tag = tag;
     }
 
-    public void setStrength(double strength) {
-        this.strength = strength;
+    public void setStamina(int stamina) {
+        this.stamina = stamina;
     }
 
     public String getName() {
@@ -102,10 +103,6 @@ public class Player {
         return items;
     }
 
-    public double getStrength() {
-        return strength;
-    }
-
     public int getTag() {
         return tag;
     }
@@ -123,15 +120,21 @@ public class Player {
         items.remove(i);
     }
 
-    public void takeDamage(int damage) {
+    public void takeDamage(int damage, boolean isHuman) {
         double effectiveDamage = damage * strength;
         health -= (int) effectiveDamage;
-        System.out.println(name + " takes " + effectiveDamage + " damage! Health is now " + health);
+        if (isHuman) {
+            System.out.println(name + " takes " + effectiveDamage + " damage.");
+        }
     }
 
-    public void attack(Player target) {
+    public void attack(Player target, boolean isHuman) {
         int damage = (int) (strength * 10); // Replace 10 for tool damage
-        System.out.println(name + " attacks " + target.getName() + " for " + damage + " damage!");
-        target.takeDamage(damage);
+        if (isHuman) {
+            System.out.println(name + " attacks " + target.getName() + " for " + damage + " damage.");
+        }
+        target.takeDamage(damage, isHuman);
     }
+
+
 }

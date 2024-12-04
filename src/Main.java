@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 public class Main {
     private static final Logger DEBUG_LOGGER = LoggingManager.getInstance().getLogger();
 
-
     private static void generatePlayers(int numNPCs, ArrayList<Player> players, int characterChoice, String difficulty) {
         Random random = new Random();
         List<Player> availablePlayers = Player.preMadePlayers.get(difficulty);
@@ -20,20 +19,20 @@ public class Main {
         // Add the user's chosen character
         Player chosenPlayer = availablePlayers.get(characterChoice - 1);
         players.add(chosenPlayer);
-        
 
         // Add random NPCs
         for (int i = 1; i < numNPCs; i++) {
-            Player randomPlayer = availablePlayers.get(random.nextInt(availablePlayers.size()));
+            Player temp = availablePlayers.get(random.nextInt(availablePlayers.size()));
+            Player randomPlayer = new Player(temp);
             players.add(randomPlayer);
-            
-           
+            players.get(i).setTag(i);
         }
+        players.get(0).setTag(0);
     }
 
     public static void generateEvent(ArrayList<Player> players, int index) {
         Random random = new Random();
-        int event = random.nextInt(7);
+        int event = random.nextInt(1,6);
         switch (event) {
             //If trap placed, event that kills random player can be active
             case 0 -> Events.enemyFound(players.get(index), players.get(random.nextInt(players.size())));
@@ -43,7 +42,6 @@ public class Main {
             case 4 -> Events.outOfSafeZone(players.get(index));
             case 5 -> Events.dropLandedNearby(players.get(index));
             case 6 -> Events.allQuiet(players.get(index));
-            case 7 -> Events.takeDamage(players.get(index), 10);
         }
     }
 
@@ -77,7 +75,7 @@ public class Main {
                      * 1. Choose difficulty
                      * 2. Nº players
                      * 3. Choose human character, NPC will be restricted to difficulty's characters
-                     * */
+                     */
 
                     boolean confirmed = false; //Make sure player desires his options
 
@@ -169,7 +167,7 @@ public class Main {
                             }
                         }
 
-                        System.out.println(AppConstants.STAR_DIVIDER);
+                        System.out.println(AppConstants.EQUALS_DIVIDER);
                         System.out.println("Number of players: " + numNPCs);
                         System.out.println("Difficulty: " + difficulty);
                         System.out.println("Character choice: " + Player.preMadePlayers.get(difficulty).get(characterChoice - 1).getName());
@@ -203,16 +201,15 @@ public class Main {
                     generatePlayers(numNPCs, players, characterChoice, difficulty);
 
                     //Start game, game runs on a turn system
-                    //TODO: check the game flow for the rounds
                     boolean gameRunning = true;
                     while (gameRunning) {
                         for (int i = 0; i < players.size(); i++) {
-                        	System.out.println("ROUND: " + i+1);
                             //Human's turn
-                            if (i == 0) {
+                            if (players.get(i).getTag() == 0) {
                                 Player human = players.getFirst();
-                                human.setHuman(true); //set the human player as a player so we can see the print from the events methods
-                                System.out.println(human.isHuman());
+
+                                System.out.println(AppConstants.displayStats(human));
+
                                 //If player has an item, displays option to use them.
                                 if (human.hasItems()) {
                                     List<Item> items = human.getItems();
@@ -248,7 +245,7 @@ public class Main {
                                     Item item = items.get(random.nextInt(0, items.size()));
                                     item.use();
                                 } else {
-                                    generateEvent(players, i); //if is a npc this doesn't print anything
+                                    generateEvent(players, i);
                                 }
                             }
 
@@ -256,10 +253,8 @@ public class Main {
                                 gameRunning = false;
                             }
                         }
-                        System.out.println(AppConstants.STAR_DIVIDER);
-                        System.out.println(AppConstants.CROWN);
-                        System.out.println(AppConstants.createHeader("Winner is player " + players.get(0).getTag() + " !"));
                     }
+                    System.out.println(AppConstants.createHeader("Winner is player " + players.get(0).getTag() + " !"));
                 }
                 break;
                 case "2": {
