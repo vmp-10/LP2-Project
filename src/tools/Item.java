@@ -6,12 +6,15 @@ import java.util.List;
 public abstract class Item {
     protected String name;
     protected String type;
+    protected Rarity rarity;
     private static List<Item> items = new ArrayList<>();
 
-    public Item(String name, String type) {
+    public Item(String name, String type, Rarity rarity) {
         this.name = name;
         this.type = type;
+        this.rarity = rarity;
     }
+
 
     public String getType() {
         return type;
@@ -19,6 +22,12 @@ public abstract class Item {
 
     public String getName() {
         return name;
+    }
+
+    public Rarity getRarity(){
+
+        return rarity;
+
     }
 
     public abstract void useItem(); // Abstract to be implemented by subclasses
