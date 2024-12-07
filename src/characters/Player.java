@@ -68,6 +68,11 @@ public class Player {
     }
 
     public void setHealth(int health) {
+        if (health > 150) {
+            health = 150;
+        } else if (health < 0) {
+            health = 0;
+        }
         this.health = health;
     }
 
@@ -80,6 +85,11 @@ public class Player {
     }
 
     public void setStamina(int stamina) {
+        if (stamina > 150) {
+            stamina = 150;
+        } else if (stamina < 0) {
+            stamina = 0;
+        }
         this.stamina = stamina;
     }
 
@@ -97,6 +107,10 @@ public class Player {
 
     public int getStamina() {
         return stamina;
+    }
+
+    public double getStrength() {
+        return strength;
     }
 
     public List<Item> getItems() {

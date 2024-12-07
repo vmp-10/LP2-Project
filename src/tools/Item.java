@@ -1,16 +1,20 @@
 package tools;
 
+import characters.Player;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Item {
     protected String name;
     protected String type;
+    protected String rarity;
     private static List<Item> items = new ArrayList<>();
 
-    public Item(String name, String type) {
+    public Item(String name, String type, String rarity) {
         this.name = name;
         this.type = type;
+        this.rarity = rarity;
     }
 
     public String getType() {
@@ -20,7 +24,7 @@ public abstract class Item {
         return name;
     }
 
-    public abstract void use(); // TODO: Abstract to be implemented by subclasses. Delete item on use.
+    public abstract void use(Player player);
 
     public static void add(Item item) {
         items.add(item);

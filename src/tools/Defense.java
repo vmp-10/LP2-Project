@@ -1,25 +1,28 @@
 package tools;
 
+import characters.Player;
+
 public class Defense extends Item {
-    private int blockPercentage;
+    private final double blockPercentage;
 
     public Defense(String name, Rarity rarity, int blockPercentage) {
-        super(name, "defense", rarity);
+        super(name, "Defense", String.valueOf(rarity));
         this.blockPercentage = blockPercentage;
     }
 
-    public int getBlockPercentage() {
+    public double getBlockPercentage() {
         return blockPercentage;
     }
 
     public int reduceDamage(int incomingDamage) {
-        int reducedDamage = incomingDamage - (incomingDamage * blockPercentage / 100);
-        return Math.max(reducedDamage, 0);
+        double reducedDamage = incomingDamage - (incomingDamage * blockPercentage / 100);
+        return (int) Math.max(reducedDamage, 0);
     }
 
     @Override
-    public void useItem() {
-
+    public void use(Player player) {
+        //TODO: Create some specific items, like you did for the potions, and if the player has them, apply the buff.
+        //TODO: Use this method solely as a add item to inventory or something
         System.out.println("This item passively reduces incoming damage by " + blockPercentage + "%.");
     }
 }

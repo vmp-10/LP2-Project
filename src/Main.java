@@ -208,7 +208,7 @@ public class Main {
                             if (players.get(i).getTag() == 0) {
                                 Player human = players.getFirst();
 
-                                System.out.println(AppConstants.displayStats(human));
+                                System.out.println(AppConstants.createBox(AppConstants.displayStats(human)));
 
                                 //If player has an item, displays option to use them.
                                 if (human.hasItems()) {
@@ -216,23 +216,24 @@ public class Main {
                                     System.out.println(AppConstants.displayItems(items.size(), items));
                                     boolean validInput = false;
 
+                                    int itemChoice = 0;
                                     while (!validInput) {
                                         try {
-                                            int itemChoice = scanner.nextInt();
+                                            itemChoice = scanner.nextInt();
 
                                             if (itemChoice > items.size() || itemChoice < 0) {
                                                 System.out.print("Insert a valid option: ");
                                             }
 
-                                            items.get(itemChoice).use();
 
                                         } catch (NumberFormatException e) {
                                             System.out.print("Insert a valid option: ");
                                         }
                                     }
 
+                                    items.get(itemChoice).use(human);
                                 } else {
-                                    //If chooses not to or doesn't use it, event
+                                    System.out.println(AppConstants.EQUALS_DIVIDER);
                                     generateEvent(players, i); //if is a npc this doesn't print anything
                                 }
                             } else {
@@ -243,7 +244,7 @@ public class Main {
                                 if (current.hasItems() && random.nextInt(4) == 1) {
                                     List<Item> items = current.getItems();
                                     Item item = items.get(random.nextInt(0, items.size()));
-                                    item.use();
+                                    item.use(current);
                                 } else {
                                     generateEvent(players, i);
                                 }
@@ -254,7 +255,7 @@ public class Main {
                             }
                         }
                     }
-                    System.out.println(AppConstants.createHeader("Winner is player " + players.get(0).getTag() + " !"));
+                    System.out.println(AppConstants.createBox("Winner is player " + players.get(0).getTag() + " !"));
                 }
                 break;
                 case "2": {

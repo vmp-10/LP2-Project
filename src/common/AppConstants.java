@@ -109,10 +109,31 @@ public final class AppConstants {
         stats.append("[Armor: " + player.getArmor() + "]");
         stats.append("[Stamina: " + player.getStamina() + "]");
 
-        return """
-                %s
-                %s
-                %s
-                """.formatted(EQUALS_DIVIDER, stats.toString().trim(), EQUALS_DIVIDER);
+        return stats.toString().trim();
     }
+
+    public static String createBox(String text) {
+        StringBuilder box = new StringBuilder();
+        int padding = 2; // Space between text and the box edges
+        int width = Math.max(20, text.length() + padding * 2); // Minimum width is 20 or enough to fit the text
+        String border = "*".repeat(width);
+
+        // Add the top border
+        box.append(border).append("\n");
+
+        // Add the centered text
+        int totalPadding = width - 2 - text.length(); // Space left after subtracting text length and border
+        int paddingLeft = totalPadding / 2;
+        int paddingRight = totalPadding - paddingLeft;
+
+        String centeredText = " ".repeat(paddingLeft) + text + " ".repeat(paddingRight);
+        box.append("*").append(centeredText).append("*").append("\n");
+
+        // Add the bottom border
+        box.append(border);
+
+        return box.toString();
+    }
+
+
 }

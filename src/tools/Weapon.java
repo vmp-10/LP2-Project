@@ -1,24 +1,21 @@
 package tools;
 
-import characters.Character;
+import characters.Player;
 
 public class Weapon extends Item {
-    private int baseDamage;
+    private final int baseDamage;
 
     public Weapon(String name, Rarity rarity, int baseDamage) {
-        super(name, "weapon", rarity);
+        super(name, "Weapon", String.valueOf(rarity));
         this.baseDamage = baseDamage;
     }
 
-    public int getDamage(Character character) {
+    public int getDamage(Player character) {
         return (int) (baseDamage * character.getStrength());
     }
 
     @Override
-    public void useItem() {
-        System.out.println("You use " + name + ", but no specific character was provided.");
-    }
-    public void useItem(Character character) {
-        System.out.println("You use " + name + ", dealing " + getDamage(character) + " damage.");
+    public void use(Player player) {
+        System.out.println("You use " + name + ", dealing " + getDamage(player) + " damage.");
     }
 }

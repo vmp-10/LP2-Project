@@ -53,7 +53,7 @@ public class Events {
                                 System.out.print("Insert a valid option: ");
                             }
 
-                            items.get(itemChoice).use();
+                            items.get(itemChoice).use(player);
 
                         } catch (NumberFormatException e) {
                             System.out.print("Insert a valid option: ");
