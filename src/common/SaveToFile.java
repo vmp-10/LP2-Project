@@ -41,7 +41,6 @@ public class SaveToFile {
             fileHandler.setFormatter(new SimpleFormatter());
 
             // Temporarily add the file handler to the logger
-            gameLogger.addHandler(fileHandler);
 
             memoryHandler.push();
         } catch (IOException e) {
