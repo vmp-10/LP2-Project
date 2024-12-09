@@ -1,6 +1,7 @@
 import characters.Player;
 import common.AppConstants;
 import common.LoggingManager;
+import common.SaveToFile;
 import core.Events;
 import tools.Item;
 
@@ -46,10 +47,13 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        SaveToFile saveToFile = new SaveToFile();
+
+
         LoggingManager loggingManager = LoggingManager.getInstance();
         loggingManager.setLoggingLevel(Level.ALL);
         loggingManager.disableLogging();
-        DEBUG_LOGGER.info("Application started.");
+        saveToFile.addContent("Application started.");
 
         String[] difficulties = {"Easy", "Normal", "Hard", "Joe Must Die", "Custom"};
 
@@ -64,7 +68,7 @@ public class Main {
                 case "1": {
 
 
-                    DEBUG_LOGGER.info("Game started.");
+                    saveToFile.addContent("Game started.");
 
                     /*
                      * Allows you to select a number of players (Max 150)
