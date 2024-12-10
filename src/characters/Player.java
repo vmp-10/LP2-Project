@@ -13,12 +13,14 @@ public class Player {
     protected int armor;
     protected int stamina;
     protected double strength;
-    protected List<Item> items;
+
     protected int tag;
+    protected List<Item> items;
 
     // HashMap for pre-made players categorized by difficulty
     public static final Map<String, List<Player>> preMadePlayers = new HashMap<>();
 
+    //Static so it's only created once
     static {
         createPreMadePlayers();
     }
@@ -83,11 +85,12 @@ public class Player {
     }
 
     public void setArmor(int armor) {
+        if (armor > 150) {
+            armor = 150;
+        } else if (armor < 0) {
+            armor = 0;
+        }
         this.armor = armor;
-    }
-
-    public void setTag(int tag) {
-        this.tag = tag;
     }
 
     public void setStamina(int stamina) {
@@ -97,6 +100,10 @@ public class Player {
             stamina = 0;
         }
         this.stamina = stamina;
+    }
+
+    public void setTag(int tag) {
+        this.tag = tag;
     }
 
     public String getName() {
@@ -152,9 +159,24 @@ public class Player {
 
     public void takeDamage(int damage, boolean isHuman) {
         double effectiveDamage = damage * strength;
-        health -= (int) effectiveDamage;
-        if (isHuman) {
-            System.out.println("Player " + tag + " takes " + effectiveDamage + " damage.");
+
+        if (armor > 0) {
+            int previousArmor = armor;
+            armor -= (int) effectiveDamage;
+
+            setArmor(armor);
+
+            if (isHuman) {
+                System.out.println("Player's armor absorbed " + Math.min(effectiveDamage, previousArmor) +" damage.");
+            }
+        }
+        else {
+            health -= (int) effectiveDamage;
+            setHealth(health);
+
+            if (isHuman) {
+                System.out.println("Player takes " + effectiveDamage + " damage.");
+            }
         }
     }
 

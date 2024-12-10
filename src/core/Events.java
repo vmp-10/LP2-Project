@@ -80,7 +80,7 @@ public class Events {
 
             boolean validInput = false;
 
-            System.out.print(AppConstants.createSelection("A drop has landed nearby, do you want to loot it [y/n]: "));
+            System.out.print(AppConstants.createSelection("A drop has landed nearby, do you want to loot it (Keep in mind it can be traped) [y/n]: "));
 
             while (validInput) {
                 try {
@@ -91,7 +91,7 @@ public class Events {
                         switch (random.nextInt(3)) {
                             case 0 -> weaponFound(player);
                             case 1 -> itemFound(player);
-                            case 2 -> trapFound(player);
+                            case 2 -> dropTrapFound(player);
                         }
                     } else if (input.toLowerCase().equals("n")){
                         validInput = true;
@@ -108,13 +108,32 @@ public class Events {
             switch (random.nextInt(0, 3)) {
                 case 0 -> weaponFound(player);
                 case 1 -> itemFound(player);
-                case 2 -> trapFound(player);
+                case 2 -> dropTrapFound(player);
                 case 3 -> allQuiet(player);
             }
         }
     }
 
-    //DONE
+    //The drop was rigged with a trap
+    private static void dropTrapFound(Player player) {
+        boolean tookDamage = false;
+
+        if (random.nextInt(0, 100) < 25) {
+            tookDamage = true;
+        }
+
+        if (player.getTag() == 0) {
+            if (tookDamage) {
+                System.out.println("You opened the drop but there was a trap.");
+                player.takeDamage(10, true);
+            } else {
+                System.out.println("You opened the drop but there was a trap. You got lucky and avoided it.");
+            }
+        } else {
+            player.takeDamage(10, false);
+        }
+    }
+
     public static void enemyFound(Player player1, Player player2) {
         if (player1.getTag() == 0) {
             Scanner scanner = new Scanner(System.in);
@@ -149,7 +168,6 @@ public class Events {
         }
     }
 
-    //DONE
     private static void fight(Player player1, Player player2) {
         if (player1.getTag() == 0) {
             player1.attack(player2, true);
@@ -263,10 +281,9 @@ public class Events {
     }
 
     public static void trapFound(Player player) {
-        int chanceToTakeDamage = random.nextInt(0, 100);
         boolean tookDamage = false;
 
-        if (chanceToTakeDamage < 25) {
+        if (random.nextInt(0, 100) < 25) {
             tookDamage = true;
         }
 
@@ -282,7 +299,6 @@ public class Events {
         }
     }
 
-    //DONE
     public static void outOfSafeZone(Player player) {
         int chanceToOutrun = random.nextInt(0, 100);
         boolean escaped = false;
@@ -292,6 +308,7 @@ public class Events {
 
         if (player.getTag() == 0) {
             if (!escaped) {
+                //TODO: This specific event should remove damage from Health, not armor. Fix.
                 System.out.println("You're in the storm, taking damage.");
                 player.takeDamage(5, true);
             } else {

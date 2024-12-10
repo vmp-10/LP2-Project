@@ -20,12 +20,14 @@ public class Potion extends Item {
     public void use(Player player) {
         if (effect.equalsIgnoreCase("Health")) {
             player.setHealth(player.getHealth() + effectValue);
-            System.out.println("You drank a " + name + " potion and restore " + effectValue + " health.");
+            if (player.getTag() == 0) {
+                System.out.println("You drank a " + name + " potion and restore " + effectValue + " health.");
+            }
         } else if (effect.equalsIgnoreCase("Stamina")) {
             player.setStamina(player.getStamina() + effectValue);
-            System.out.println("You drank a " + name + " potion and restore " + effectValue + " stamina.");
-        } else {
-            System.out.println("Unknown effect: " + effect);
+            if (player.getTag() == 0) {
+                System.out.println("You drank a " + name + " potion and restore " + effectValue + " stamina.");
+            }
         }
     }
 }

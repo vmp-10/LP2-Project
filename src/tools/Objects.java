@@ -5,8 +5,9 @@ public final class Objects {
     public static final Weapon COPPER_SWORD = new Weapon("Copper Sword", Rarity.RARE,25);
     public static final Weapon DAMASCUS_STEEL_SWORD = new Weapon("Damascus Steel Sword", Rarity.EPIC,35);
     public static final Weapon IRIDIUM_SWORD = new Weapon("Iridium sword", Rarity.LEGENDARY,50);
+
     public static final Weapon GLOCK_18= new Weapon("Glock-18", Rarity.RARE,30);
-    public static final Weapon GLOCK_16= new Weapon("AK47", Rarity.EPIC,40);
+    public static final Weapon AK_47= new Weapon("AK47", Rarity.EPIC,40);
 
     public static  final  Potion HEALTH_POTION = new Potion("Health Potion", Rarity.RARE, "health", 30);
     public static  final  Potion STAMINA_POTION = new Potion("Stamina Potion", Rarity.RARE, "stamina", 30);

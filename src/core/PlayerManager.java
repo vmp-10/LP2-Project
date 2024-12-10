@@ -24,7 +24,7 @@
 
             players.add(chosenPlayer); // Add the user's chosen character
 
-            for (int i = 1; i < numNPCs - 1; i++) { //Leaving one space for playable character
+            for (int i = 1; i < numNPCs; i++) {
                 Player temp = availablePlayers.get(random.nextInt(availablePlayers.size()));
                 Player randomPlayer = new Player(temp);
                 players.add(randomPlayer);

@@ -38,16 +38,24 @@ public class Main {
                     loadGame();
                     break;
                 case "3":
-                    System.out.print(AppConstants.CREDITS);
+                    showCredits();
                     break;
                 case "exit":
                     running = false;
                     break;
                 default:
-                    handleInvalidInput(input);
+                    handleInvalidInput();
                     break;
             }
         }
+    }
+
+    private static void handleInvalidInput() {
+        System.out.println("Invalid input. Please enter a valid option (1, 2, 3, or 'exit').");
+    }
+
+    private static void showCredits() {
+        System.out.print(AppConstants.CREDITS);
     }
 
     private static void startGame(Scanner scanner, GameInputHandler inputHandler, PlayerManager playerManager,
@@ -110,12 +118,5 @@ public class Main {
     private static void loadGame() {
         File file = FileManager.createFile("/data/", "game-1.txt");
         // Implement game loading logic here
-
-
-
-    }
-
-    private static void handleInvalidInput(String input) {
-        System.out.println("Invalid input. Please enter a valid option (1, 2, 3, or 'exit').");
     }
 }
