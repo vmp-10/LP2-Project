@@ -21,9 +21,20 @@ public final class AppConstants {
             %s
             1. Start game
             2. Load file
-            3. Create character
+            3. Credits
             %s
             Option:\s""".formatted(STAR_DIVIDER, STAR_DIVIDER, EQUALS_DIVIDER);
+
+    public static final String CREDITS = """
+            %s
+            * Andrea Offredi
+            * Fernando Alonso
+            * Javier Suarez-Barcena
+            * Vlad Prisacaru
+            ---------------------------
+            Thank you for playing!
+            %s
+            """.formatted(AppConstants.createBox("Credits"), EQUALS_DIVIDER);
 
     public static final String CHARACTERS_EASY = """
             1. Trump   -> [HP 100, ARMOR 150, STAMINA 100, STRENGTH 0.9]

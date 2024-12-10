@@ -14,7 +14,7 @@ public class SaveToFile {
 
     // creating the constructino.
     public SaveToFile() {
-        contents = new ArrayList<>();
+        this.contents = new ArrayList<>();
     }
 
     // save content to the list

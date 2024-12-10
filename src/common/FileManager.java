@@ -11,11 +11,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 //A class that's merely a utility function
-public final class FileUtils {
+public final class FileManager {
     private static final Logger LOGGER = LoggingManager.getInstance().getLogger();
 
     // Private constructor to prevent instantiation
-    private FileUtils() {
+    private FileManager() {
     }
 
     public static File createFile(String directoryPath, String fileName) {
@@ -47,7 +47,7 @@ public final class FileUtils {
         }
 
         File[] files;
-        files = FileUtils.listFiles(directoryPath);
+        files = FileManager.listFiles(directoryPath);
         if (files == null) {
             return null;
         }
