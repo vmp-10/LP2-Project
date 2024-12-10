@@ -2,6 +2,7 @@ package tools;
 
 import characters.Player;
 
+//Weapon is items[0]
 public class Weapon extends Item {
     private final int baseDamage;
 

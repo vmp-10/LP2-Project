@@ -1,10 +1,12 @@
 import characters.Player;
 import common.AppConstants;
+import common.FileUtils;
 import common.LoggingManager;
 import common.SaveToFile;
 import core.Events;
 import tools.Item;
 
+import java.io.File;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,6 +14,7 @@ import java.util.logging.Logger;
 
 public class Main {
     private static final Logger DEBUG_LOGGER = LoggingManager.getInstance().getLogger();
+    private static final SaveToFile saveToFile = new SaveToFile();
 
     private static void generatePlayers(int numNPCs, ArrayList<Player> players, int characterChoice, String difficulty) {
         Random random = new Random();
@@ -33,27 +36,32 @@ public class Main {
 
     public static void generateEvent(ArrayList<Player> players, int index) {
         Random random = new Random();
-        int event = random.nextInt(1,6);
-        switch (event) {
-            //If trap placed, event that kills random player can be active
-            case 0 -> Events.enemyFound(players.get(index), players.get(random.nextInt(players.size())));
-            case 1 -> Events.weaponFound(players.get(index));
-            case 2 -> Events.itemFound(players.get(index));
-            case 3 -> Events.trapFound(players.get(index));
-            case 4 -> Events.outOfSafeZone(players.get(index));
-            case 5 -> Events.dropLandedNearby(players.get(index));
-            case 6 -> Events.allQuiet(players.get(index));
+        int event = random.nextInt(0, 100); // Generate a number from 0 to 99
+
+        if (event < 5) { // 5% chance
+            Events.dropLandedNearby(players.get(index));
+        } else if (event >= 5 && event < 30) { // 25%
+            Events.outOfSafeZone(players.get(index));
+        } else if (event >= 30 && event < 40) { // 10%
+            Events.allQuiet(players.get(index));
+        } else if (event >= 40 && event < 55) { // 15%
+            Events.enemyFound(players.get(index), players.get(random.nextInt(players.size())));
+        } else if (event >= 55 && event < 70) { // 15%
+            Events.weaponFound(players.get(index));
+        } else if (event >= 70 && event < 85) { // 15%
+            Events.itemFound(players.get(index));
+        } else { // Remaining 15%
+            Events.trapFound(players.get(index));
         }
     }
 
-    public static void main(String[] args) {
-        SaveToFile saveToFile = new SaveToFile();
 
+    public static void main(String[] args) {
 
         LoggingManager loggingManager = LoggingManager.getInstance();
         loggingManager.setLoggingLevel(Level.ALL);
         loggingManager.disableLogging();
-        saveToFile.addContent("Application started.");
+        saveToFile.addContent("App started started.");
 
         String[] difficulties = {"Easy", "Normal", "Hard", "Joe Must Die", "Custom"};
 
@@ -66,8 +74,6 @@ public class Main {
 
             switch (input.trim()) {
                 case "1": {
-
-
                     saveToFile.addContent("Game started.");
 
                     /*
@@ -197,6 +203,26 @@ public class Main {
                                 System.out.print("Invalid input. Please enter a valid answer [y/n]: ");
                             }
                         }
+
+                        /*
+                         *  System.out.print(AppConstants.createSelection("Do you want to save the game options to a file [y/n]"));
+                         *  while (!validInput) {
+                         *      try {
+                         *          input = scanner.nextLine();
+                         *          if (input.toLowerCase().equals("y")) {
+                         *              confirmed = true;
+                         *              validInput = true;
+                         *          } else if (input.toLowerCase().equals("n")) {
+                         *              validInput = true; // Exit this inner loop and restart the process
+                         *              break; // Break the inner loop to start over
+                         *          } else {
+                         *              System.out.print("Invalid input. Please enter a valid answer [y/n]: ");
+                         *          }
+                         *      } catch (InputMismatchException e) {
+                         *          System.out.print("Invalid input. Please enter a valid answer [y/n]: ");
+                         *      }
+                         *  }
+                         */
                     }
 
                     System.out.print(AppConstants.createHeader("Game started, godspeed!"));
@@ -210,6 +236,8 @@ public class Main {
                         for (int i = 0; i < players.size(); i++) {
                             //Human's turn
                             if (players.get(i).getTag() == 0) {
+                                System.out.println(AppConstants.createBox(players.size() + " players remaining"));
+
                                 Player human = players.getFirst();
 
                                 System.out.println(AppConstants.createBox(AppConstants.displayStats(human)));
@@ -218,18 +246,16 @@ public class Main {
                                 if (human.hasItems()) {
                                     List<Item> items = human.getItems();
                                     System.out.println(AppConstants.displayItems(items.size(), items));
-                                    boolean validInput = false;
 
+                                    boolean validInput = false;
                                     int itemChoice = 0;
                                     while (!validInput) {
                                         try {
                                             itemChoice = scanner.nextInt();
 
-                                            if (itemChoice > items.size() || itemChoice < 0) {
+                                            if (itemChoice > items.size() || itemChoice < 1) {
                                                 System.out.print("Insert a valid option: ");
                                             }
-
-
                                         } catch (NumberFormatException e) {
                                             System.out.print("Insert a valid option: ");
                                         }
@@ -237,13 +263,12 @@ public class Main {
 
                                     items.get(itemChoice).use(human);
                                 } else {
-                                    System.out.println(AppConstants.EQUALS_DIVIDER);
-                                    generateEvent(players, i); //if is a npc this doesn't print anything
+                                    generateEvent(players, i);
                                 }
                             } else {
                                 Player current = players.get(i);
                                 Random random = new Random();
-                          
+
                                 //Simulate a 25% to use item
                                 if (current.hasItems() && random.nextInt(4) == 1) {
                                     List<Item> items = current.getItems();
@@ -263,11 +288,13 @@ public class Main {
                 }
                 break;
                 case "2": {
-                    //TODO: Fernando's part
+                     //File structure: nº players, difficulty, player chosen
+                    File file = FileUtils.createFile("data", "game-v1");
+
                 }
                 break;
                 case "3": {
-                    //TODO: Javi's part
+
                 }
                 break;
                 case "exit": {
@@ -285,5 +312,4 @@ public class Main {
         DEBUG_LOGGER.info("Game ended.");
     }
 }
-
 

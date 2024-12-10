@@ -134,11 +134,17 @@ public class Player {
         items.remove(i);
     }
 
+    public void addItem(Item item){
+        if (items.size() > 4) {
+            items.add(item);
+        }
+    }
+
     public void takeDamage(int damage, boolean isHuman) {
         double effectiveDamage = damage * strength;
         health -= (int) effectiveDamage;
         if (isHuman) {
-            System.out.println(name + " takes " + effectiveDamage + " damage.");
+            System.out.println("Player " + tag + " takes " + effectiveDamage + " damage.");
         }
     }
 
@@ -149,6 +155,4 @@ public class Player {
         }
         target.takeDamage(damage, isHuman);
     }
-
-
 }
