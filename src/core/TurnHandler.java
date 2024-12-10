@@ -19,9 +19,13 @@ public class TurnHandler {
         boolean inputInvalid = false;
         do {
             try {
+
+                System.out.println(AppConstants.createBox("New round begins!", 50));
                 System.out.println();
-                System.out.println(AppConstants.createBox(players.size() + " players remaining"));
-                System.out.println(AppConstants.createBox(AppConstants.displayStats(human)));
+                System.out.println(AppConstants.createBox(players.size() + " players remaining", 50));
+                System.out.println(AppConstants.createBox(AppConstants.displayStats(human), 50));
+
+
                 System.out.println("Press Enter to continue... ");
                 String input = scanner.nextLine();
 

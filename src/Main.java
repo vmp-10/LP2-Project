@@ -6,6 +6,7 @@ import core.*;
 import tools.Item;
 
 import java.io.File;
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,7 +38,7 @@ public class Main {
                     loadGame();
                     break;
                 case "3":
-                    showCredits();
+                    System.out.print(AppConstants.CREDITS);
                     break;
                 case "exit":
                     running = false;
@@ -67,9 +68,7 @@ public class Main {
         // Ask for confirmation
         boolean confirmation = inputHandler.getGameConfirmation(scanner);
 
-        if (confirmation) {
-            System.out.print(AppConstants.createBox("Game started, Godspeed!"));
-        } else {
+        if (!confirmation) {
             System.out.println("Game setup canceled. Going back to main menu.");
             return;  // Exit method if not confirmed
         }
@@ -86,7 +85,6 @@ public class Main {
         boolean gameRunning = true;
 
         ArrayList<Player> players = playerManager.getPlayers();
-
 
         while (gameRunning) {
             for (int i = 0; i < players.size(); i++) {
@@ -106,19 +104,15 @@ public class Main {
     }
 
     private static void announceWinner(Player winner) {
-        System.out.println(AppConstants.createBox("Winner is player " + winner.getTag() + "!"));
+        System.out.println(AppConstants.createBox("Winner is player " + winner.getTag() + "!", 25));
     }
 
     private static void loadGame() {
-        File file = FileManager.createFile("data", "game-1.txt");
+        File file = FileManager.createFile("/data/", "game-1.txt");
         // Implement game loading logic here
 
 
 
-    }
-
-    private static void showCredits() {
-        System.out.print(AppConstants.CREDITS);
     }
 
     private static void handleInvalidInput(String input) {

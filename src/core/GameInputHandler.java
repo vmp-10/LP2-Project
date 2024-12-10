@@ -63,29 +63,7 @@ public class GameInputHandler {
         int choice;
         while (true) {
             System.out.print(AppConstants.createHeader("Choose character: "));
-
-            switch (difficulty) {
-                case "Easy": {
-                    System.out.print(AppConstants.CHARACTERS_EASY);
-                }
-                break;
-                case "Normal": {
-                    System.out.print(AppConstants.CHARACTERS_NORMAL);
-                }
-                break;
-                case "Hard": {
-                    System.out.print(AppConstants.CHARACTERS_HARD);
-                }
-                break;
-                case "Joe Must Die": {
-                    System.out.print(AppConstants.CHARACTERS_JOE_MUST_DIE);
-                }
-                break;
-                case "Custom": {
-                    System.out.print(AppConstants.CHARACTERS_CUSTOM);
-                }
-                break;
-            }
+            System.out.print(AppConstants.createCharacterString(difficulty));
 
             try {
                 choice = Integer.parseInt(scanner.nextLine());

@@ -3,6 +3,7 @@ package common;
 import characters.Player;
 import tools.Item;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class AppConstants {
@@ -34,36 +35,33 @@ public final class AppConstants {
             ---------------------------
             Thank you for playing!
             %s
-            """.formatted(AppConstants.createBox("Credits"), EQUALS_DIVIDER);
+            """.formatted(AppConstants.createBox("Credits", 25), EQUALS_DIVIDER);
 
-    public static final String CHARACTERS_EASY = """
-            1. Trump   -> [HP 100, ARMOR 150, STAMINA 100, STRENGTH 0.9]
-            2. Bush    -> [HP 100, ARMOR 100, STAMINA 150, STRENGTH 0.9]
-            %s
-            Option:\s""".formatted(EQUALS_DIVIDER);
+    public static String createCharacterString(String difficulty) {
+        List<Player> players = Player.preMadePlayers.getOrDefault(difficulty, new ArrayList<>());
 
-    public static final String CHARACTERS_NORMAL = """
-            1. Jamal   -> [HP 100, ARMOR 100, STAMINA 175, STRENGTH 0.8]
-            2. Barack  -> [HP 100, ARMOR 120, STAMINA 125, STRENGTH 0.9]
-            %s
-            Option:\s""".formatted(EQUALS_DIVIDER);
+        StringBuilder builder = new StringBuilder();
+        builder.append(difficulty).append(" characters:\n");
+        int index = 1;
 
-    public static final String CHARACTERS_HARD = """
-            1. Kamala  -> [HP 75, ARMOR 120, STAMINA 100, STRENGTH 0.7]
-            2. Lincoln  -> [HP 75, ARMOR 100, STAMINA 80, STRENGTH 0.6]
-            %s
-            Option:\s""".formatted(EQUALS_DIVIDER);
+        for (Player player : players) {
+            builder.append(index++)
+                    .append(". ")
+                    .append(player.getName())
+                    .append(" -> [HP ")
+                    .append(player.getHealth())
+                    .append(", ARMOR ")
+                    .append(player.getArmor())
+                    .append(", STAMINA ")
+                    .append(player.getStamina())
+                    .append(", STRENGTH ")
+                    .append(player.getStrength())
+                    .append("]\n");
+        }
 
-    public static final String CHARACTERS_JOE_MUST_DIE = """
-            1. Joe     -> [HP 50, ARMOR 95, STAMINA 50, STRENGTH 0.5]
-            %s
-            Option:\s""".formatted(EQUALS_DIVIDER);
-
-    public static final String CHARACTERS_CUSTOM = """
-            1. Empty     -> [HP 0, ARMOR 0, STAMINA 0, STRENGTH 0.0]
-            %s
-            Option:\s""".formatted(EQUALS_DIVIDER);
-
+        builder.append(EQUALS_DIVIDER).append("\nOption: ");
+        return builder.toString();
+    }
 
     public static final String DIFFICULTY = """
             1. Easy Mode
@@ -90,9 +88,6 @@ public final class AppConstants {
                 %s
                 Option:\s""".formatted(EQUALS_DIVIDER, title, EQUALS_DIVIDER);
     }
-
-
-
 
     public static String displayItems(int numItems, List<Item> items) {
         StringBuilder itemList = new StringBuilder();
@@ -122,10 +117,12 @@ public final class AppConstants {
         return stats.toString().trim();
     }
 
-    public static String createBox(String text) {
+    public static String createBox(String text, int width) {
         StringBuilder box = new StringBuilder();
         int padding = 2; // Space between text and the box edges
-        int width = Math.max(20, text.length() + padding * 2); // Minimum width is 20 or enough to fit the text
+
+        // Ensure the width is sufficient to fit the text with padding
+        width = Math.max(width, text.length() + padding * 2);
         String border = "*".repeat(width);
 
         // Add the top border
@@ -144,6 +141,7 @@ public final class AppConstants {
 
         return box.toString();
     }
+
 
     private AppConstants() {
     }

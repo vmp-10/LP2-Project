@@ -26,15 +26,21 @@ public class Player {
     private static void createPreMadePlayers() {
         preMadePlayers.put("Easy", List.of(
                 new Player("Trump", 100, 150, 100, 0.9),
-                new Player("Bush", 100, 100, 150, 0.9)
+                new Player("Bush", 100, 100, 150, 0.9),
+                new Player("Carter", 100, 120, 130, 0.85),
+                new Player("Ford", 100, 140, 110, 0.88)
         ));
         preMadePlayers.put("Normal", List.of(
                 new Player("Jamal", 100, 100, 175, 0.8),
-                new Player("Barack", 100, 120, 125, 0.9)
+                new Player("Barack", 100, 120, 125, 0.9),
+                new Player("Clinton", 90, 110, 150, 0.83),
+                new Player("Franklin", 95, 115, 140, 0.85)
         ));
         preMadePlayers.put("Hard", List.of(
                 new Player("Kamala", 75, 120, 100, 0.7),
-                new Player("Lincoln", 75, 100, 80, 0.6)
+                new Player("Lincoln", 75, 100, 80, 0.6),
+                new Player("Roosevelt", 80, 110, 90, 0.65),
+                new Player("Jackson", 70, 95, 110, 0.68)
         ));
         preMadePlayers.put("Joe Must Die", List.of(
                 new Player("Joe", 50, 95, 50, 0.5)
@@ -132,6 +138,10 @@ public class Player {
 
     public void removeItem(int i) {
         items.remove(i);
+    }
+
+    public void removeItem(Item item) {
+        items.remove(item);
     }
 
     public void addItem(Item item){
