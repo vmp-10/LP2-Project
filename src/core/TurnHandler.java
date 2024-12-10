@@ -9,23 +9,40 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
-import static core.EventManager.generateEvent;
 
 public class TurnHandler {
     public TurnHandler(){
 
     }
 
-    public static void handleHumanTurn(Player human, ArrayList<Player> players, Scanner scanner) {
-        System.out.println(AppConstants.createBox(players.size() + " players remaining"));
-        System.out.println(AppConstants.createBox(AppConstants.displayStats(human)));
+    public static void handleHumanTurn(Player human, ArrayList<Player> players, Scanner scanner, EventManager eventManager) {
+        boolean inputInvalid = false;
+        do {
+            try {
+                System.out.println();
+                System.out.println(AppConstants.createBox(players.size() + " players remaining"));
+                System.out.println(AppConstants.createBox(AppConstants.displayStats(human)));
+                System.out.println("Press Enter to continue... ");
+                String input = scanner.nextLine();
 
-        if (human.hasItems()) {
-            handleHumanItemUsage(human, scanner);
-        } else {
-            generateEvent(players, human.getTag());
-        }
+                // Proceed only if Enter is pressed
+                if (input.isEmpty()) {
+                    if (human.hasItems()) {
+                        inputInvalid = true;
+                        handleHumanItemUsage(human, scanner);
+                    } else {
+                        inputInvalid = true;
+                        eventManager.generateEvent(players, human.getTag());
+                    }
+                } else {
+                    System.out.println("Press Enter to continue...");
+                }
+            } catch (Exception e) {
+                System.out.println("Press Enter to continue... ");
+            }
+        } while (!inputInvalid);
     }
+
 
     public static void handleHumanItemUsage(Player human, Scanner scanner) {
         List<Item> items = human.getItems();
@@ -46,14 +63,14 @@ public class TurnHandler {
         }
     }
 
-    public static void handleNPCTurn(Player npc, ArrayList<Player> players) {
+    public static void handleNPCTurn(Player npc, ArrayList<Player> players, EventManager eventManager) {
         Random random = new Random();
         if (npc.hasItems() && random.nextInt(4) == 1) {
             List<Item> items = npc.getItems();
             Item item = items.get(random.nextInt(items.size()));
             item.use(npc);
         } else {
-            generateEvent(players, npc.getTag());
+            eventManager.generateEvent(players, npc.getTag());
         }
     }
 }

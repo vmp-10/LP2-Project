@@ -16,6 +16,9 @@ public final class FileManager {
 
     // Private constructor to prevent instantiation
     private FileManager() {
+        LoggingManager loggingManager = LoggingManager.getInstance();
+        loggingManager.setLoggingLevel(Level.ALL);
+        loggingManager.disableLogging();
     }
 
     public static File createFile(String directoryPath, String fileName) {

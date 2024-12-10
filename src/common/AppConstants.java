@@ -92,8 +92,7 @@ public final class AppConstants {
     }
 
 
-    private AppConstants() {
-    }
+
 
     public static String displayItems(int numItems, List<Item> items) {
         StringBuilder itemList = new StringBuilder();
@@ -146,5 +145,6 @@ public final class AppConstants {
         return box.toString();
     }
 
-
+    private AppConstants() {
+    }
 }

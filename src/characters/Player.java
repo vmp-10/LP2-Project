@@ -135,7 +135,7 @@ public class Player {
     }
 
     public void addItem(Item item){
-        if (items.size() > 4) {
+        if (items.size() < 4) {
             items.add(item);
         }
     }

@@ -1,12 +1,8 @@
 import characters.Player;
 import common.AppConstants;
 import common.FileManager;
-import common.LoggingManager;
 import common.SaveToFile;
-import core.Events;
-import core.GameInputHandler;
-import core.PlayerManager;
-import core.TurnHandler;
+import core.*;
 import tools.Item;
 
 import java.io.File;
@@ -16,22 +12,16 @@ import java.util.logging.Logger;
 
 
 public class Main {
-    private static final Logger DEBUG_LOGGER = LoggingManager.getInstance().getLogger();
     private static final SaveToFile SAVE_TO_FILE = new SaveToFile();
 
-    private static final int MIN_PLAYERS = 50;
-    private static final int MAX_PLAYERS = 150;
-
-    private static final String[] DIFFICULTIES = {"Easy", "Normal", "Hard", "Joe Must Die", "Custom"};
-
     public static void main(String[] args) {
-        setupLogging();
         SAVE_TO_FILE.addContent("App started.");
 
         Scanner scanner = new Scanner(System.in);
         GameInputHandler inputHandler = new GameInputHandler(scanner);
         PlayerManager playerManager = new PlayerManager();
         TurnHandler turnHandler = new TurnHandler();
+        EventManager eventManager = new EventManager();
 
         boolean running = true;
 
@@ -41,7 +31,7 @@ public class Main {
 
             switch (input) {
                 case "1":
-                    startGame(scanner, inputHandler, playerManager, turnHandler);
+                    startGame(scanner, inputHandler, playerManager, turnHandler, eventManager);
                     break;
                 case "2":
                     loadGame();
@@ -50,7 +40,6 @@ public class Main {
                     showCredits();
                     break;
                 case "exit":
-                    DEBUG_LOGGER.info("Exiting application.");
                     running = false;
                     break;
                 default:
@@ -60,7 +49,8 @@ public class Main {
         }
     }
 
-    private static void startGame(Scanner scanner, GameInputHandler inputHandler, PlayerManager playerManager, TurnHandler turnHandler) {
+    private static void startGame(Scanner scanner, GameInputHandler inputHandler, PlayerManager playerManager,
+                                  TurnHandler turnHandler, EventManager eventManager) {
         SAVE_TO_FILE.addContent("Game started.");
 
         // Get player selections
@@ -87,31 +77,24 @@ public class Main {
         // Initialize players
         playerManager.initializePlayers(numPlayers, human, difficulty);
 
-        runGameLoop(playerManager, scanner, turnHandler);
+        runGameLoop(playerManager, scanner, turnHandler, eventManager);
 
         announceWinner(playerManager.getPlayers().get(0)); // Winner is at index 0
     }
 
-
-
-    private static void setupLogging() {
-        LoggingManager loggingManager = LoggingManager.getInstance();
-        loggingManager.setLoggingLevel(Level.ALL);
-        loggingManager.disableLogging();
-    }
-
-    private static void runGameLoop(PlayerManager playerManager, Scanner scanner, TurnHandler turnHandler) {
+    private static void runGameLoop(PlayerManager playerManager, Scanner scanner, TurnHandler turnHandler, EventManager eventManager) {
         boolean gameRunning = true;
 
         ArrayList<Player> players = playerManager.getPlayers();
+
 
         while (gameRunning) {
             for (int i = 0; i < players.size(); i++) {
                 Player currentPlayer = players.get(i);
                 if (currentPlayer.getTag() == 0) {
-                    turnHandler.handleHumanTurn(currentPlayer, players, scanner);
+                    turnHandler.handleHumanTurn(currentPlayer, players, scanner, eventManager);
                 } else {
-                    turnHandler.handleNPCTurn(currentPlayer, players);
+                    turnHandler.handleNPCTurn(currentPlayer, players, eventManager);
                 }
 
                 if (players.size() == 1) {
@@ -127,8 +110,11 @@ public class Main {
     }
 
     private static void loadGame() {
-        File file = FileManager.createFile("data", "game-v1");
+        File file = FileManager.createFile("data", "game-1.txt");
         // Implement game loading logic here
+
+
+
     }
 
     private static void showCredits() {
@@ -137,11 +123,5 @@ public class Main {
 
     private static void handleInvalidInput(String input) {
         System.out.println("Invalid input. Please enter a valid option (1, 2, 3, or 'exit').");
-        DEBUG_LOGGER.warning("Invalid input received: " + input);
     }
 }
-
-
-
-
-
