@@ -42,6 +42,8 @@ public class Main {
                     break;
                 case "exit":
                     running = false;
+                    showCredits();
+                    scanner.close();
                     break;
                 default:
                     handleInvalidInput();

@@ -23,6 +23,8 @@ public class Defense extends Item {
     public void use(Player player) {
         //TODO: Create some specific items, like you did for the potions, and if the player has them, apply the buff.
         //TODO: Use this method solely as a add item to inventory or something
-        System.out.println("This item passively reduces incoming damage by " + blockPercentage + "%.");
+        if (player.getTag() == 0) {
+            System.out.println("This item passively reduces incoming damage by " + blockPercentage + "%.");
+        }
     }
 }

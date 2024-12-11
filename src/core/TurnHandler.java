@@ -24,7 +24,7 @@ public class TurnHandler {
                 System.out.println();
                 System.out.println(AppConstants.createBox(players.size() + " players remaining", 50));
                 System.out.println(AppConstants.createBox(AppConstants.displayStats(human), 50));
-
+                System.out.println(AppConstants.createBox(AppConstants.displayWeapons(human), 50));
 
                 System.out.println("Press Enter to continue... ");
                 String input = scanner.nextLine();

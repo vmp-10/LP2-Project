@@ -2,6 +2,7 @@ package common;
 
 import characters.Player;
 import tools.Item;
+import tools.Weapon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +52,7 @@ public final class AppConstants {
                     .append(" -> [HP ")
                     .append(player.getHealth())
                     .append(", ARMOR ")
-                    .append(player.getArmor())
+                    .append(player.getShield())
                     .append(", STAMINA ")
                     .append(player.getStamina())
                     .append(", STRENGTH ")
@@ -111,8 +112,19 @@ public final class AppConstants {
         StringBuilder stats = new StringBuilder();
 
         stats.append("[HP: " + player.getHealth() + "]");
-        stats.append("[Armor: " + player.getArmor() + "]");
+        stats.append("[Armor: " + player.getShield() + "]");
         stats.append("[Stamina: " + player.getStamina() + "]");
+
+        return stats.toString().trim();
+    }
+
+    public static String displayWeapons(Player player) {
+        StringBuilder stats = new StringBuilder();
+        Weapon weapon0 = player.getWeapon(0);
+        Weapon weapon1 = player.getWeapon(1);
+
+        stats.append("[" + weapon0.getName() + ": " + weapon0.getBaseDamage() + "]");
+        stats.append("[" + weapon1.getName() + ": " + weapon1.getBaseDamage() + "]");
 
         return stats.toString().trim();
     }

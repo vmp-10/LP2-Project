@@ -245,8 +245,10 @@ public class Events {
 
             System.out.print(AppConstants.createSelection("You found a " + item.getName() + ", do you want to pick it up? [y/n]: "));
 
-            List<Item> playerItems = player.getItems();
-            System.out.print(AppConstants.displayItems(playerItems.size(), playerItems));
+            if (player.hasItems()) {
+                List<Item> playerItems = player.getItems();
+                System.out.print(AppConstants.displayItems(playerItems.size(), playerItems));
+            }
 
             String input = "";
             boolean validInput = false;

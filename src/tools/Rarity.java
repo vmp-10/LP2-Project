@@ -5,5 +5,4 @@ public enum Rarity {
     RARE,
     EPIC,
     LEGENDARY;
-
 }

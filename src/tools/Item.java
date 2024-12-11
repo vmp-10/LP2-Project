@@ -13,6 +13,7 @@ public abstract class Item {
         this.rarity = rarity;
     }
 
+
     public String getType() {
         return type;
     }

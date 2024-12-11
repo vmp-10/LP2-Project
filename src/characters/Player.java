@@ -1,6 +1,8 @@
 package characters;
 
+import tools.Defense;
 import tools.Item;
+import tools.Weapon;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,12 +12,16 @@ import java.util.Map;
 public class Player {
     protected String name;
     protected int health;
-    protected int armor;
+    protected int shield;
     protected int stamina;
     protected double strength;
 
+    private static final int MAX_ITEMS = 4;
+    private static final int MAX_WEAPONS = 2;
+
     protected int tag;
     protected List<Item> items;
+    protected List<Weapon> weapons;
 
     // HashMap for pre-made players categorized by difficulty
     public static final Map<String, List<Player>> preMadePlayers = new HashMap<>();
@@ -49,30 +55,32 @@ public class Player {
         ));
     }
 
-    public Player(String name, int health, int armor, int stamina, double strength, List<Item> items, int tag) {
+    public Player(String name, int health, int shield, int stamina, double strength, List<Item> items, List<Weapon> weapons, int tag) {
         this.name = name;
         this.health = health;
-        this.armor = armor;
+        this.shield = shield;
         this.stamina = stamina;
         this.strength = strength;
         this.tag = tag;
 
-        // Initialize items to a new list if null, otherwise copy the existing list
+        // Initialize items and weapons to new lists if null, otherwise copy the existing lists
         this.items = (items == null) ? new ArrayList<>() : new ArrayList<>(items);
+        this.weapons = (weapons == null) ? new ArrayList<>() : new ArrayList<>(weapons);
     }
 
-    public Player(String name, int health, int armor, int stamina, double strength) {
-        this(name, health, armor, stamina, strength, null, -1);
+    public Player(String name, int health, int shield, int stamina, double strength) {
+        this(name, health, shield, stamina, strength, null, null, -1);
     }
 
     public Player(Player other) {
         this.name = other.name;
         this.health = other.health;
-        this.armor = other.armor;
+        this.shield = other.shield;
         this.stamina = other.stamina;
         this.strength = other.strength;
         this.tag = other.tag;
         this.items = new ArrayList<>(other.items);
+        this.weapons = new ArrayList<>(other.weapons);
     }
 
     public void setHealth(int health) {
@@ -84,13 +92,13 @@ public class Player {
         this.health = health;
     }
 
-    public void setArmor(int armor) {
-        if (armor > 150) {
-            armor = 150;
-        } else if (armor < 0) {
-            armor = 0;
+    public void setShield(int shield) {
+        if (shield > 150) {
+            shield = 150;
+        } else if (shield < 0) {
+            shield = 0;
         }
-        this.armor = armor;
+        this.shield = shield;
     }
 
     public void setStamina(int stamina) {
@@ -114,8 +122,8 @@ public class Player {
         return health;
     }
 
-    public int getArmor() {
-        return armor;
+    public int getShield() {
+        return shield;
     }
 
     public int getStamina() {
@@ -152,19 +160,37 @@ public class Player {
     }
 
     public void addItem(Item item){
-        if (items.size() < 4) {
+        if (items.size() < MAX_ITEMS) {
             items.add(item);
+        }
+    }
+
+    public void removeWeapon(int i) {
+        weapons.remove(i);
+    }
+
+    public Weapon getWeapon(int i) {
+        return weapons.get(i);
+    }
+
+    public void removeWeapon(Weapon weapon) {
+        weapons.remove(weapon);
+    }
+
+    public void addWeapon(Weapon weapon){
+        if (weapons.size() < MAX_WEAPONS) {
+            weapons.add(weapon);
         }
     }
 
     public void takeDamage(int damage, boolean isHuman) {
         double effectiveDamage = damage * strength;
 
-        if (armor > 0) {
-            int previousArmor = armor;
-            armor -= (int) effectiveDamage;
+        if (shield > 0) {
+            int previousArmor = shield;
+            shield -= (int) effectiveDamage;
 
-            setArmor(armor);
+            setShield(shield);
 
             if (isHuman) {
                 System.out.println("Player's armor absorbed " + Math.min(effectiveDamage, previousArmor) +" damage.");
@@ -183,7 +209,7 @@ public class Player {
     public void attack(Player target, boolean isHuman) {
         int damage = (int) (strength * 10); // Replace 10 for tool damage
         if (isHuman) {
-            System.out.println(name + " attacks " + target.getName() + " for " + damage + " damage.");
+            System.out.println(name + " attacks " + target.getTag() + " for " + damage + " damage.");
         }
         target.takeDamage(damage, isHuman);
     }
