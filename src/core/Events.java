@@ -82,7 +82,7 @@ public class Events {
 
             System.out.print(AppConstants.createSelection("A drop has landed nearby, do you want to loot it (Keep in mind it can be traped) [y/n]: "));
 
-            while (validInput) {
+            while (!validInput) {
                 try {
                     input = scanner.nextLine();
 
@@ -98,7 +98,6 @@ public class Events {
                         System.out.println("You ran away.");
                     } else {
                         System.out.print("Invalid input. Please enter a valid answer [y/n]: ");
-
                     }
                 } catch (IllegalArgumentException e) {
                     System.out.print("Invalid input. Please enter a valid answer [y/n]: ");
@@ -142,7 +141,7 @@ public class Events {
             boolean validInput = false;
 
             System.out.print(AppConstants.createSelection("You found a player, do you want to fight [y/n]: "));
-            while (validInput) {
+            while (!validInput) {
                 try {
                     input = scanner.nextLine();
 
