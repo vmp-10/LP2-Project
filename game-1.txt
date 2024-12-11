@@ -1,0 +1,2 @@
+game1,60,Easy Mode,1
+game2,40,2,1
