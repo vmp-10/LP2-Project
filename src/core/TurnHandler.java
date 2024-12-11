@@ -23,6 +23,7 @@ public class TurnHandler {
                 System.out.println(AppConstants.createBox("New round begins!", 50));
                 System.out.println();
                 System.out.println(AppConstants.createBox(players.size() + " players remaining", 50));
+                System.out.println(AppConstants.displayStats(human));
                 System.out.println(AppConstants.createBox(AppConstants.displayWeapons(human), 50));
 
                 System.out.println("Press Enter to continue... ");
