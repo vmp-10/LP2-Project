@@ -2,16 +2,11 @@ package core;
 
 import characters.Player;
 import common.AppConstants;
-import tools.Item;
+import tools.*;
 import tools.Objects;
-import tools.Potion;
-import tools.Weapon;
-import tools.Defense;
 
 import java.util.*;
 import java.util.Scanner;
-import java.util.stream.Stream;
-import java.util.stream.Collectors;
 
 //Verify if player or NPC, if NPC, no prints nor inputs allowed -> FIXED. Replaced isHuman() with getTag, if tag == 0 player is Human.
 public class Events {
@@ -90,7 +85,7 @@ public class Events {
                             case 1 -> itemFound(player);
                             case 2 -> dropTrapFound(player);
                         }
-                    } else if (input.toLowerCase().equals("n")){
+                    } else if (input.toLowerCase().equals("n")) {
                         validInput = true;
                         System.out.println("You ran away.");
                     } else {
@@ -145,7 +140,7 @@ public class Events {
                     if (input.toLowerCase().equals("y")) {
                         validInput = true;
                         fight(player1, player2);
-                    } else if (input.toLowerCase().equals("n")){
+                    } else if (input.toLowerCase().equals("n")) {
                         validInput = true;
                         escape(player1, player2, true);
                     } else {
@@ -189,15 +184,17 @@ public class Events {
     }
 
     public static void weaponFound(Player player) {
+        Weapon weapon = chooseWeapon(); //Get a random weapon simulating by Rarity
+        Weapon currentWeapon = player.getWeapon(0);
 
-        //TODO: Apply rarity for each weapon.
-        Weapon weapon = Objects.WEAPONS.get(random.nextInt(Objects.WEAPONS.size()));
+        System.out.println();
 
         if (player.getTag() == 0) {
+
             Scanner scanner = new Scanner(System.in);
 
-            // TODO: Show difference in stats and prompt user which weapon he wants to replace
-            System.out.print(AppConstants.createSelection("You found a " + weapon.getName() + ", do you want to pick it up? [y/n] "));
+            System.out.print(AppConstants.createSelection("You found a " + weapon.getName() + ", do you want to pick it up? [y/n] "
+                                                          + AppConstants.displayWeaponStats(weapon)));
 
             String input = "";
             boolean validInput = false;
@@ -207,6 +204,9 @@ public class Events {
 
                     if (input.toLowerCase().equals("y")) {
                         validInput = true;
+
+                        System.out.println(AppConstants.displayWeaponsChoice(player.getWeapons()));
+
                         player.addWeapon(weapon);
                         System.out.println("The weapon " + weapon.getName() + " was added to the inventory");
                     } else if (input.toLowerCase().equals("n")) {
@@ -219,17 +219,37 @@ public class Events {
                 }
             }
         } else {
-
-            Random random = new Random();
-            boolean NPCchoice = random.nextBoolean();  // Randomly choose between true (y) or false (n)
-
-            if (NPCchoice) {
+            // Randomly choose between true (y) or false (n)
+            if (random.nextBoolean()) {
                 player.addWeapon(weapon);
             } else {
                 allQuiet(player);
             }
         }
     }
+
+   private static Weapon chooseWeapon() {
+    int percentage = random.nextInt(101);
+    List<Weapon> weapons = new ArrayList<>();
+
+
+    if (percentage < Rarity.LEGENDARY.getPercentage()) {
+        weapons = Objects.weaponsByRarity.get(Rarity.LEGENDARY);
+    } else if (percentage < Rarity.EPIC.getPercentage()) {
+        weapons = Objects.weaponsByRarity.get(Rarity.EPIC);
+    } else if (percentage < Rarity.RARE.getPercentage()) {
+        weapons = Objects.weaponsByRarity.get(Rarity.RARE);
+    } else {
+        weapons = Objects.weaponsByRarity.get(Rarity.COMMON);
+    }
+
+    // Select a random weapon from the list of weapons of the chosen rarity
+    Weapon weapon = weapons.get(random.nextInt(weapons.size()));
+
+    // Return the chosen weapon
+    return weapon;
+}
+
 
     public static void itemFound(Player player) {
         //Get all items available
@@ -279,6 +299,21 @@ public class Events {
             }
         }
     }
+
+    private static Potion choosePotion() {
+        int percentage = random.nextInt(101);
+        List<Potion> potions = new ArrayList<>();
+
+        if (percentage <= Rarity.EPIC.getPercentage()){
+            potions = Objects.potionsByRarity.get(Rarity.EPIC);
+        } else {
+            potions = Objects.potionsByRarity.get(Rarity.RARE);
+        }
+        Potion potion = potions.get(random.nextInt(potions.size()));
+
+        return potion;
+    }
+
 
     public static void trapFound(Player player) {
         boolean tookDamage = false;

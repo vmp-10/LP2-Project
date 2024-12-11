@@ -19,6 +19,10 @@ public class Weapon extends Item {
         return (int) (baseDamage * character.getStrength());
     }
 
+    public String getRarity(){
+        return rarity;
+    }
+
     @Override
     public void use(Player player) {
         if (player.getTag() == 0) {

@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class AppConstants {
-
+    public static final int MAX_ITEMS = 4;
+    public static final int MAX_WEAPONS = 2;
+    
     public static final String STAR_DIVIDER = "**********************";
     public static final String EQUALS_DIVIDER = "=======================";
 
@@ -69,7 +71,6 @@ public final class AppConstants {
             2. Normal Mode
             3. Hard Mode
             4. Joe Must Die Mode
-            5. Custom Mode
             %s
             Option:\s""".formatted(EQUALS_DIVIDER);
 
@@ -108,12 +109,12 @@ public final class AppConstants {
                 """.formatted(EQUALS_DIVIDER, numItems, itemList.toString().trim(), last, EQUALS_DIVIDER);
     }
 
-    public static String displayWeapons(int numItems, List<Weapon> weapons) {
-        StringBuilder itemList = new StringBuilder();
+    public static String displayWeaponsChoice(List<Weapon> weapons) {
+        StringBuilder stringBuilder = new StringBuilder();
 
         int last = 0;
-        for (int i = 1; i <= numItems; i++) {
-            itemList.append(i).append(". " + weapons.get(i) + "\n");
+        for (int i = 1; i <= MAX_WEAPONS; i++) {
+            stringBuilder.append(i).append(". " + weapons.get(i) + displayWeaponStats(weapons.get(i)) + "\n");
             last = i;
         }
 
@@ -122,10 +123,10 @@ public final class AppConstants {
                 Weapons:
                 %s
                 %s
-                """.formatted(EQUALS_DIVIDER, itemList.toString().trim(), last, EQUALS_DIVIDER);
+                """.formatted(EQUALS_DIVIDER, stringBuilder.toString().trim(), last, EQUALS_DIVIDER);
     }
 
-    public static String displayStats(Player player) {
+    public static String displayPlayerStats(Player player) {
         StringBuilder stats = new StringBuilder();
 
         stats.append("[HP: " + player.getHealth() + "]");
@@ -142,6 +143,22 @@ public final class AppConstants {
 
         stats.append("[" + weapon0.getName() + ": " + weapon0.getBaseDamage() + "]");
         stats.append("[" + weapon1.getName() + ": " + weapon1.getBaseDamage() + "]");
+
+        return stats.toString().trim();
+    }
+
+    public static String displayWeaponStats(Weapon weapon) {
+        StringBuilder stats = new StringBuilder();
+        
+        stats.append("[" + weapon.getName() + ": " + weapon.getBaseDamage() + "]");
+
+        return stats.toString().trim();
+    }
+
+    public static String compareWeapons(Weapon weapon0, Weapon weapon1) {
+        StringBuilder stats = new StringBuilder();
+
+        stats.append("[" + weapon0.getName() +"/" + weapon1.getName() + " | " + weapon0.getBaseDamage() +"/" + weapon1.getBaseDamage() + "]");
 
         return stats.toString().trim();
     }
@@ -174,4 +191,6 @@ public final class AppConstants {
 
     private AppConstants() {
     }
+
+    
 }

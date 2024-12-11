@@ -1,5 +1,6 @@
 package characters;
 
+import common.AppConstants;
 import tools.Defense;
 import tools.Item;
 import tools.Weapon;
@@ -15,10 +16,7 @@ public class Player {
     protected int shield;
     protected int stamina;
     protected double strength;
-
-    private static final int MAX_ITEMS = 4;
-    private static final int MAX_WEAPONS = 2;
-
+    
     protected int tag;
     protected List<Item> items;
     protected List<Weapon> weapons;
@@ -160,7 +158,7 @@ public class Player {
     }
 
     public void addItem(Item item) {
-        if (items.size() < MAX_ITEMS) {
+        if (items.size() < AppConstants.MAX_ITEMS) {
             items.add(item);
         }
     }
@@ -173,13 +171,19 @@ public class Player {
         return weapons.get(i);
     }
 
+    public List<Weapon> getWeapons() {
+        return weapons;
+    }
+
     public void removeWeapon(Weapon weapon) {
         weapons.remove(weapon);
     }
 
     public void addWeapon(Weapon weapon) {
-        if (weapons.size() < MAX_WEAPONS) {
+        if (weapons.size() < AppConstants.MAX_WEAPONS) {
             weapons.add(weapon);
+        } else {
+            replaceWeapon(weapon);
         }
     }
 
@@ -211,10 +215,15 @@ public class Player {
     }
 
     public void attack(Player target, boolean isHuman) {
-        int damage = (int) (strength * 10); // Replace 10 for tool damage
+        Weapon equippedWeapon = weapons.getFirst();
+
+        int damage = equippedWeapon.getDamage(this);
+
         if (isHuman) {
-            System.out.println(name + " attacks Player " + target.getTag() + " for " + damage + " damage.");
+            System.out.println(name + " attacks Player " + target.getTag() + " with " + equippedWeapon.getName() + " for " + damage + " damage!");
         }
+
+
         target.takeDamage(damage, isHuman);
     }
 }

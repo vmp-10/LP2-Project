@@ -80,7 +80,7 @@ public class Main {
 
         if (!confirmation) {
             System.out.println("Game setup canceled. Going back to main menu.");
-            return;  // Exit method if not confirmed
+            return;  
         }
 
         // Initialize players

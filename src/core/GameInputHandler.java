@@ -12,7 +12,7 @@ public class GameInputHandler {
     private static final int MIN_PLAYERS = 50;
     private static final int MAX_PLAYERS = 150;
 
-    private static final String[] DIFFICULTIES = {"Easy", "Normal", "Hard", "Joe Must Die", "Custom"};
+    private static final String[] DIFFICULTIES = {"Easy", "Normal", "Hard", "Joe Must Die"};
 
 
     public GameInputHandler(Scanner scanner) {
