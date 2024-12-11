@@ -199,7 +199,7 @@ public class Events {
         if (player.getTag() == 0) {
             Scanner scanner = new Scanner(System.in);
 
-            // TODO: Show difference in stats
+            // TODO: Show difference in stats and prompt user which weapon he wants to replace
             System.out.print(AppConstants.createSelection("You found a " + weapon.getName() + ", do you want to pick it up? [y/n] "));
 
             String input = "";
@@ -210,7 +210,7 @@ public class Events {
 
                     if (input.toLowerCase().equals("y")) {
                         validInput = true;
-                        player.addItem(weapon);
+                        player.addWeapon(weapon);
                         System.out.println("The weapon " + weapon.getName() + " was added to the inventory");
                     } else if (input.toLowerCase().equals("n")) {
                         validInput = true;
@@ -227,7 +227,7 @@ public class Events {
             boolean NPCchoice = random.nextBoolean();  // Randomly choose between true (y) or false (n)
 
             if (NPCchoice) {
-                player.addItem(weapon);
+                player.addWeapon(weapon);
             } else {
                 allQuiet(player);
             }

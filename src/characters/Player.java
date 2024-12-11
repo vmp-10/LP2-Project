@@ -159,7 +159,7 @@ public class Player {
         items.remove(item);
     }
 
-    public void addItem(Item item){
+    public void addItem(Item item) {
         if (items.size() < MAX_ITEMS) {
             items.add(item);
         }
@@ -177,10 +177,15 @@ public class Player {
         weapons.remove(weapon);
     }
 
-    public void addWeapon(Weapon weapon){
+    public void addWeapon(Weapon weapon) {
         if (weapons.size() < MAX_WEAPONS) {
             weapons.add(weapon);
         }
+    }
+
+    public void replaceWeapon(Weapon weapon) {
+        weapons.remove(weapon);
+        weapons.add(weapon);
     }
 
     public void takeDamage(int damage, boolean isHuman) {
@@ -193,10 +198,9 @@ public class Player {
             setShield(shield);
 
             if (isHuman) {
-                System.out.println("Player's armor absorbed " + Math.min(effectiveDamage, previousArmor) +" damage.");
+                System.out.println("Player's armor absorbed " + Math.min(effectiveDamage, previousArmor) + " damage.");
             }
-        }
-        else {
+        } else {
             health -= (int) effectiveDamage;
             setHealth(health);
 
@@ -209,7 +213,7 @@ public class Player {
     public void attack(Player target, boolean isHuman) {
         int damage = (int) (strength * 10); // Replace 10 for tool damage
         if (isHuman) {
-            System.out.println(name + " attacks " + target.getTag() + " for " + damage + " damage.");
+            System.out.println(name + " attacks Player " + target.getTag() + " for " + damage + " damage.");
         }
         target.takeDamage(damage, isHuman);
     }
