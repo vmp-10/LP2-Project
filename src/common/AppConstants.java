@@ -108,6 +108,23 @@ public final class AppConstants {
                 """.formatted(EQUALS_DIVIDER, numItems, itemList.toString().trim(), last, EQUALS_DIVIDER);
     }
 
+    public static String displayWeapons(int numItems, List<Weapon> weapons) {
+        StringBuilder itemList = new StringBuilder();
+
+        int last = 0;
+        for (int i = 1; i <= numItems; i++) {
+            itemList.append(i).append(". " + weapons.get(i) + "\n");
+            last = i;
+        }
+
+        return """
+                %s
+                Weapons:
+                %s
+                %s
+                """.formatted(EQUALS_DIVIDER, itemList.toString().trim(), last, EQUALS_DIVIDER);
+    }
+
     public static String displayStats(Player player) {
         StringBuilder stats = new StringBuilder();
 

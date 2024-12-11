@@ -16,9 +16,6 @@ import java.util.stream.Collectors;
 //Verify if player or NPC, if NPC, no prints nor inputs allowed -> FIXED. Replaced isHuman() with getTag, if tag == 0 player is Human.
 public class Events {
     private static final Random random = new Random();
-    private static List<Weapon> weapons = List.of(Objects.MUD_SWORD, Objects.COPPER_SWORD, Objects.DAMASCUS_STEEL_SWORD, Objects.IRIDIUM_SWORD);
-    private static List<Potion> potions = List.of(Objects.HEALTH_POTION, Objects.STAMINA_POTION, Objects.SUPER_HEALTH_POTION, Objects.SUPER_STAMINA_POTION);
-    private static List<Defense> defenses = List.of(Objects.CLOTH_ARMOR, Objects.LEATHER_ARMOR, Objects.CHAIN_ARMOR, Objects.DIAMOND_ARMOR);
 
     private Events() {
 
@@ -194,7 +191,7 @@ public class Events {
     public static void weaponFound(Player player) {
 
         //TODO: Apply rarity for each weapon.
-        Weapon weapon = weapons.get(random.nextInt(weapons.size()));
+        Weapon weapon = Objects.WEAPONS.get(random.nextInt(Objects.WEAPONS.size()));
 
         if (player.getTag() == 0) {
             Scanner scanner = new Scanner(System.in);
@@ -236,7 +233,10 @@ public class Events {
 
     public static void itemFound(Player player) {
         //Get all items available
-        List<Item> items = Stream.concat(potions.stream(), defenses.stream()).collect(Collectors.toList());
+        List<Item> items = new ArrayList<>();
+        items.addAll(Objects.POTIONS);
+        //TODO: DONT ADD THIS UNTIL JAVI FIXES HIS CODE items.addAll(Objects.DEFENSES);
+
         Item item = items.get(random.nextInt(items.size()));
 
         if (player.getTag() == 0) {
@@ -267,7 +267,6 @@ public class Events {
                     System.out.print("Invalid input. Please enter a valid answer [y/n]: ");
                 }
             }
-
         } else {
             // Non-Human Player (NPC) Case
             // Automatically decide if the NPC will pick up the item (e.g., randomly choose "y" or "n")
