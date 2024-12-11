@@ -3,6 +3,7 @@ package core;
 import characters.Player;
 import common.AppConstants;
 
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -77,23 +78,24 @@ public class GameInputHandler {
         }
     }
 
-    public static boolean getGameConfirmation(Scanner scanner){
-       String input;
+    public static boolean getGameConfirmation(Scanner scanner) {
+        return getYesNoInput(AppConstants.createSelection("Is everything correct? [y/n]: "), scanner);
+    }
+
+    public static boolean getYesNoInput(String prompt, Scanner scanner) {
         while (true) {
-            System.out.print(AppConstants.createSelection("Is everything correct? (yes/no): "));
-
             try {
-                input = scanner.nextLine();
+                System.out.print(prompt);
+                String input = scanner.nextLine().trim();
 
-                if (input.equals("yes")) {
-                    return true;
-                } else if (input.equals("no")){
-                    return false;
-                }
+                // Validate input
+                if ("y".equals(input)) return true; // Valid input: yes
+                if ("n".equals(input)) return false; // Valid input: no
 
-                System.out.println("Invalid input. Please try again: ");
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a valid number: ");
+                // Handle invalid input case
+                System.out.println("Invalid input. Please enter [y/n]: ");
+            } catch (InputMismatchException e) {
+                System.out.println("Input error: Please enter a valid [y/n] response.");
             }
         }
     }

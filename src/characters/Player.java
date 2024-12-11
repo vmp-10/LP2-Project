@@ -16,7 +16,7 @@ public class Player {
     protected int shield;
     protected int stamina;
     protected double strength;
-    
+
     protected int tag;
     protected List<Item> items;
     protected List<Weapon> weapons;
@@ -136,10 +136,13 @@ public class Player {
         return items;
     }
 
+    public Item getItem(int i) {
+        return items.get(i);
+    }
+
     public int getTag() {
         return tag;
     }
-
 
     public boolean isAlive() {
         return health > 0;
@@ -159,6 +162,9 @@ public class Player {
 
     public void addItem(Item item) {
         if (items.size() < AppConstants.MAX_ITEMS) {
+            if (tag == 0) {
+                System.out.println(item.getName() + " added to inventory.");
+            }
             items.add(item);
         }
     }
@@ -211,6 +217,17 @@ public class Player {
             if (isHuman) {
                 System.out.println("Player takes " + effectiveDamage + " damage.");
             }
+        }
+    }
+
+    public void takeStormDamage(int damage, boolean isHuman) {
+        double effectiveDamage = damage * strength;
+
+        health -= (int) effectiveDamage;
+        setHealth(health);
+
+        if (isHuman) {
+            System.out.println("Player takes " + effectiveDamage + " damage.");
         }
     }
 

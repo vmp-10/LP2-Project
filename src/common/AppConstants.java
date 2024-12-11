@@ -91,23 +91,45 @@ public final class AppConstants {
                 Option:\s""".formatted(EQUALS_DIVIDER, title, EQUALS_DIVIDER);
     }
 
-    public static String displayItems(int numItems, List<Item> items) {
+    public static String displayItems(Player player) {
         StringBuilder itemList = new StringBuilder();
 
-        int last = 0;
-        for (int i = 1; i <= numItems; i++) {
-            itemList.append(i).append(". " + items.get(i) + "\n");
-            last = i;
+        List<Item> items = player.getItems();
+        int numItems = items.size();
+
+        for (int i = 0; i < numItems; i++) {
+            itemList.append(i + 1).append(". ").append(items.get(i).getName()).append("\n");
         }
 
         return """
-                %s
-                You have %d items:
-                %s
-                %d. Don't use any item. 
-                %s
-                """.formatted(EQUALS_DIVIDER, numItems, itemList.toString().trim(), last, EQUALS_DIVIDER);
+            %s
+            Items:
+            %s
+            %s
+            """.formatted(EQUALS_DIVIDER, itemList.toString().trim(), EQUALS_DIVIDER);
     }
+
+
+    public static String displayItemChoice(Player player) {
+        StringBuilder itemList = new StringBuilder();
+
+        List<Item> items = player.getItems();
+        int numItems = items.size();
+
+        for (int i = 0; i < numItems; i++) {
+            itemList.append(i + 1).append(". ").append(items.get(i).getName()).append("\n");
+        }
+
+        itemList.append(numItems + 1).append(". Don't use any item.");
+
+        return """
+            %s
+            You have %d items:
+            %s
+            %s
+            """.formatted(EQUALS_DIVIDER, numItems, itemList.toString().trim(), EQUALS_DIVIDER);
+    }
+
 
     public static String displayWeaponsChoice(List<Weapon> weapons) {
         StringBuilder stringBuilder = new StringBuilder();

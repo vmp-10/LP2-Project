@@ -86,12 +86,13 @@ public class Main {
         // Initialize players
         playerManager.initializePlayers(numPlayers, human, difficulty);
 
-        runGameLoop(playerManager, scanner, turnHandler, eventManager);
+        runGameLoop(playerManager, scanner, turnHandler, eventManager, inputHandler);
 
         announceWinner(playerManager.getPlayers().get(0)); // Winner is at index 0
     }
 
-    private static void runGameLoop(PlayerManager playerManager, Scanner scanner, TurnHandler turnHandler, EventManager eventManager) {
+    private static void runGameLoop(PlayerManager playerManager, Scanner scanner,
+                                    TurnHandler turnHandler, EventManager eventManager,GameInputHandler inputHandler) {
         boolean gameRunning = true;
 
         ArrayList<Player> players = playerManager.getPlayers();
@@ -100,9 +101,9 @@ public class Main {
             for (int i = 0; i < players.size(); i++) {
                 Player currentPlayer = players.get(i);
                 if (currentPlayer.getTag() == 0) {
-                    turnHandler.handleHumanTurn(currentPlayer, players, scanner, eventManager);
+                    turnHandler.handleHumanTurn(currentPlayer, players, scanner, eventManager, turnHandler, inputHandler);
                 } else {
-                    turnHandler.handleNPCTurn(currentPlayer, players, eventManager);
+                    turnHandler.handleNPCTurn(currentPlayer, players, eventManager, turnHandler, inputHandler);
                 }
 
                 if (players.size() == 1) {

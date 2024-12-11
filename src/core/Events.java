@@ -16,91 +16,42 @@ public class Events {
 
     }
 
-    public static void allQuiet(Player player) {
-        //If player is human he'll be given te choice to use an item, else nothing happens
+    public static void allQuiet(Player player, TurnHandler turnHandler, GameInputHandler inputHandler) {
         if (player.getTag() == 0) {
             Scanner scanner = new Scanner(System.in);
             System.out.println("Nothing is happening right now.");
 
             if (player.hasItems()) {
-                System.out.print(AppConstants.createSelection("Do you want to use an item from your inventory? [y/n] "));
-                String input;
-
-                boolean validInput = false;
-                while (!validInput) {
-                    try {
-                        input = scanner.nextLine();
-
-                        if (input.toLowerCase().equals("y")) {
-                            List<Item> items = player.getItems();
-                            System.out.println(AppConstants.displayItems(items.size(), items));
-
-                            boolean choice = false;
-                            int itemChoice = 0;
-                            while (!choice) {
-                                try {
-                                    itemChoice = scanner.nextInt();
-
-                                    if (itemChoice > items.size() || itemChoice < 1) {
-                                        System.out.print("Insert a valid option: ");
-                                    }
-                                } catch (NumberFormatException e) {
-                                    System.out.print("Insert a valid option: ");
-                                }
-                            }
-
-                            items.get(itemChoice).use(player);
-
-                            validInput = true;
-                        } else if (input.toLowerCase().equals("n")) {
-                            validInput = true;
-                        } else {
-                            System.out.print("Invalid input. Please enter a valid answer [y/n]: ");
-                        }
-                    } catch (IllegalArgumentException e) {
-                        System.out.println(e.getMessage());
-                    }
+                boolean useItem = inputHandler
+                        .getYesNoInput(AppConstants
+                                .createSelection("Do you want to use an item from your inventory [y/n]: "), scanner);
+                if (useItem) {
+                    turnHandler.handleHumanItemUsage(player, scanner);
                 }
             }
         }
     }
 
-    public static void dropLandedNearby(Player player) {
+    public static void dropLandedNearby(Player player, TurnHandler turnHandler, GameInputHandler inputHandler) {
         if (player.getTag() == 0) {
             Scanner scanner = new Scanner(System.in);
-            String input;
 
-            boolean validInput = false;
-
-            System.out.print(AppConstants.createSelection("A drop has landed nearby, do you want to loot it (Keep in mind it can be traped) [y/n]: "));
-
-            while (!validInput) {
-                try {
-                    input = scanner.nextLine();
-
-                    if (input.toLowerCase().equals("y")) {
-                        validInput = true;
-                        switch (random.nextInt(3)) {
-                            case 0 -> weaponFound(player);
-                            case 1 -> itemFound(player);
-                            case 2 -> dropTrapFound(player);
-                        }
-                    } else if (input.toLowerCase().equals("n")) {
-                        validInput = true;
-                        System.out.println("You ran away.");
-                    } else {
-                        System.out.print("Invalid input. Please enter a valid answer [y/n]: ");
-                    }
-                } catch (IllegalArgumentException e) {
-                    System.out.print("Invalid input. Please enter a valid answer [y/n]: ");
+            boolean lootDrop = inputHandler.getYesNoInput(AppConstants.createSelection("A drop has landed nearby, do you want to loot it (Keep in mind it can be trapped) [y/n]: "), scanner);
+            if (lootDrop) {
+                switch (random.nextInt(3)) {
+                    case 0 -> weaponFound(player, turnHandler, inputHandler);
+                    case 1 -> itemFound(player, turnHandler, inputHandler);
+                    case 2 -> dropTrapFound(player);
                 }
+            } else {
+                System.out.println("You ran away.");
             }
         } else {
             switch (random.nextInt(0, 3)) {
-                case 0 -> weaponFound(player);
-                case 1 -> itemFound(player);
+                case 0 -> weaponFound(player, turnHandler, inputHandler);
+                case 1 -> itemFound(player, turnHandler, inputHandler);
                 case 2 -> dropTrapFound(player);
-                case 3 -> allQuiet(player);
+                case 3 -> allQuiet(player, turnHandler, inputHandler);
             }
         }
     }
@@ -125,30 +76,17 @@ public class Events {
         }
     }
 
-    public static void enemyFound(Player player1, Player player2) {
+    public static void enemyFound(Player player1, Player player2, GameInputHandler inputHandler) {
         if (player1.getTag() == 0) {
             Scanner scanner = new Scanner(System.in);
-            String input;
 
-            boolean validInput = false;
-
-            System.out.print(AppConstants.createSelection("You found a player, do you want to fight [y/n]: "));
-            while (!validInput) {
-                try {
-                    input = scanner.nextLine();
-
-                    if (input.toLowerCase().equals("y")) {
-                        validInput = true;
-                        fight(player1, player2);
-                    } else if (input.toLowerCase().equals("n")) {
-                        validInput = true;
-                        escape(player1, player2, true);
-                    } else {
-                        System.out.print("Invalid input. Please enter a valid answer [y/n]: ");
-                    }
-                } catch (IllegalArgumentException e) {
-                    System.out.print("Invalid input. Please enter a valid answer [y/n]: ");
-                }
+            boolean fight = inputHandler
+                    .getYesNoInput(AppConstants
+                            .createSelection("You found a player, do you want to fight [y/n]: "), scanner);
+            if (fight) {
+                fight(player1, player2);
+            } else {
+                escape(player1, player2, true);
             }
         } else {
             if (random.nextInt(0, 100) < 25) {
@@ -169,7 +107,7 @@ public class Events {
 
     // You have a chance to be seen by the other player and be attacked
     private static void escape(Player player1, Player player2, boolean isHuman) {
-        int staminaLoss = random.nextInt(2);
+        int staminaLoss = random.nextInt(10);
         int stamina = player1.getStamina();
 
         if (isHuman) {
@@ -183,128 +121,84 @@ public class Events {
         }
     }
 
-    public static void weaponFound(Player player) {
-        Weapon weapon = chooseWeapon(); //Get a random weapon simulating by Rarity
+    public static void weaponFound(Player player, TurnHandler turnHandler, GameInputHandler inputHandler) {
+        Weapon weapon = chooseWeapon();
         Weapon currentWeapon = player.getWeapon(0);
 
-        System.out.println();
-
         if (player.getTag() == 0) {
-
             Scanner scanner = new Scanner(System.in);
 
-            System.out.print(AppConstants.createSelection("You found a " + weapon.getName() + ", do you want to pick it up? [y/n] "
-                                                          + AppConstants.displayWeaponStats(weapon)));
-
-            String input = "";
-            boolean validInput = false;
-            while (!validInput) {
-                try {
-                    input = scanner.nextLine();
-
-                    if (input.toLowerCase().equals("y")) {
-                        validInput = true;
-
-                        System.out.println(AppConstants.displayWeaponsChoice(player.getWeapons()));
-
-                        player.addWeapon(weapon);
-                        System.out.println("The weapon " + weapon.getName() + " was added to the inventory");
-                    } else if (input.toLowerCase().equals("n")) {
-                        validInput = true;
-                    } else {
-                        System.out.print("Invalid input. Please enter a valid answer [y/n]: ");
-                    }
-                } catch (InputMismatchException e) {
-                    System.out.print("Invalid input. Please enter a valid answer [y/n]: ");
-                }
+            boolean pickWeapon = inputHandler.getYesNoInput(AppConstants
+                    .createSelection("You found a " + weapon.getName() + ", do you want to pick it up [y/n]: "), scanner);
+            if (pickWeapon) {
+                System.out.println(AppConstants.displayWeaponsChoice(player.getWeapons()));
+                player.addWeapon(weapon);
+                System.out.println("The weapon " + weapon.getName() + " was added to the inventory");
             }
         } else {
-            // Randomly choose between true (y) or false (n)
             if (random.nextBoolean()) {
                 player.addWeapon(weapon);
             } else {
-                allQuiet(player);
+                allQuiet(player, turnHandler, inputHandler);
             }
         }
     }
 
-   private static Weapon chooseWeapon() {
-    int percentage = random.nextInt(101);
-    List<Weapon> weapons = new ArrayList<>();
+    private static Weapon chooseWeapon() {
+        int percentage = random.nextInt(101);
+        List<Weapon> weapons = new ArrayList<>();
 
+        if (percentage < Rarity.LEGENDARY.getPercentage()) {
+            weapons = Objects.weaponsByRarity.get(Rarity.LEGENDARY);
+        } else if (percentage < Rarity.EPIC.getPercentage()) {
+            weapons = Objects.weaponsByRarity.get(Rarity.EPIC);
+        } else if (percentage < Rarity.RARE.getPercentage()) {
+            weapons = Objects.weaponsByRarity.get(Rarity.RARE);
+        } else {
+            weapons = Objects.weaponsByRarity.get(Rarity.COMMON);
+        }
 
-    if (percentage < Rarity.LEGENDARY.getPercentage()) {
-        weapons = Objects.weaponsByRarity.get(Rarity.LEGENDARY);
-    } else if (percentage < Rarity.EPIC.getPercentage()) {
-        weapons = Objects.weaponsByRarity.get(Rarity.EPIC);
-    } else if (percentage < Rarity.RARE.getPercentage()) {
-        weapons = Objects.weaponsByRarity.get(Rarity.RARE);
-    } else {
-        weapons = Objects.weaponsByRarity.get(Rarity.COMMON);
+        // Select a random weapon from the list of weapons of the chosen rarity
+        Weapon weapon = weapons.get(random.nextInt(weapons.size()));
+
+        return weapon;
     }
 
-    // Select a random weapon from the list of weapons of the chosen rarity
-    Weapon weapon = weapons.get(random.nextInt(weapons.size()));
-
-    // Return the chosen weapon
-    return weapon;
-}
-
-
-    public static void itemFound(Player player) {
-        //Get all items available
+    public static void itemFound(Player player, TurnHandler turnHandler, GameInputHandler inputHandler) {
+        // Get all items available
         List<Item> items = new ArrayList<>();
         items.addAll(Objects.POTIONS);
-        //TODO: DONT ADD THIS UNTIL JAVI FIXES HIS CODE items.addAll(Objects.DEFENSES);
+
+        // TODO: Uncomment when defense items are ready
+        // items.addAll(Objects.DEFENSES);
 
         Item item = items.get(random.nextInt(items.size()));
 
         if (player.getTag() == 0) {
             Scanner scanner = new Scanner(System.in);
 
-            System.out.print(AppConstants.createSelection("You found a " + item.getName() + ", do you want to pick it up? [y/n]: "));
-
-            if (player.hasItems()) {
-                List<Item> playerItems = player.getItems();
-                System.out.print(AppConstants.displayItems(playerItems.size(), playerItems));
-            }
-
-            String input = "";
-            boolean validInput = false;
-            while (!validInput) {
-                try {
-                    input = scanner.nextLine();
-
-                    if (input.toLowerCase().equals("y")) {
-                        player.addItem(item);
-                        validInput = true;
-                    } else if (input.toLowerCase().equals("n")) {
-                        validInput = true;
-                    } else {
-                        System.out.print("Invalid input. Please enter a valid answer [y/n]: ");
-                    }
-                } catch (InputMismatchException e) {
-                    System.out.print("Invalid input. Please enter a valid answer [y/n]: ");
-                }
+            boolean pickItem = inputHandler.getYesNoInput(AppConstants
+                    .createSelection("You found a " + item.getName() + ", do you want to pick it up? [y/n]: "), scanner);
+            if (pickItem) {
+                player.addItem(item);
             }
         } else {
             // Non-Human Player (NPC) Case
             // Automatically decide if the NPC will pick up the item (e.g., randomly choose "y" or "n")
-
-            // Randomly choose between true (y) or false (n)
             if (random.nextBoolean()) {
                 player.addItem(item);
             } else {
-                allQuiet(player);
+                allQuiet(player, turnHandler, inputHandler);
             }
         }
     }
+
 
     private static Potion choosePotion() {
         int percentage = random.nextInt(101);
         List<Potion> potions = new ArrayList<>();
 
-        if (percentage <= Rarity.EPIC.getPercentage()){
+        if (percentage <= Rarity.EPIC.getPercentage()) {
             potions = Objects.potionsByRarity.get(Rarity.EPIC);
         } else {
             potions = Objects.potionsByRarity.get(Rarity.RARE);
@@ -343,15 +237,14 @@ public class Events {
 
         if (player.getTag() == 0) {
             if (!escaped) {
-                //TODO: This specific event should remove damage from Health, not armor. Fix.
                 System.out.println("You're in the storm, taking damage.");
-                player.takeDamage(5, true);
+                player.takeStormDamage(5, true);
             } else {
                 System.out.println("You escaped the storm.");
             }
         } else {
             if (!escaped) {
-                player.takeDamage(5, false);
+                player.takeStormDamage(5, false);
             }
         }
     }

@@ -15,7 +15,8 @@ public class TurnHandler {
 
     }
 
-    public static void handleHumanTurn(Player human, ArrayList<Player> players, Scanner scanner, EventManager eventManager) {
+    public static void handleHumanTurn(Player human, ArrayList<Player> players, Scanner scanner,
+                                       EventManager eventManager, TurnHandler turnHandler, GameInputHandler inputHandler) {
         boolean inputInvalid = false;
         do {
             try {
@@ -36,7 +37,7 @@ public class TurnHandler {
                         handleHumanItemUsage(human, scanner);
                     } else {
                         inputInvalid = true;
-                        eventManager.generateEvent(players, human.getTag());
+                        eventManager.generateEvent(players, human.getTag(), turnHandler, inputHandler);
                     }
                 } else {
                     System.out.println("Press Enter to continue...");
@@ -50,7 +51,7 @@ public class TurnHandler {
 
     public static void handleHumanItemUsage(Player human, Scanner scanner) {
         List<Item> items = human.getItems();
-        System.out.println(AppConstants.displayItems(items.size(), items));
+        System.out.print(AppConstants.displayItemChoice(human));
 
         int choice;
         while (true) {
@@ -58,6 +59,8 @@ public class TurnHandler {
                 choice = Integer.parseInt(scanner.nextLine());
                 if (choice >= 1 && choice <= items.size()) {
                     items.get(choice - 1).use(human);
+                    break;
+                } else if (choice == items.size() + 1){ //equals don't use any item
                     break;
                 }
                 System.out.println("Invalid choice. Please try again.");
@@ -67,14 +70,17 @@ public class TurnHandler {
         }
     }
 
-    public static void handleNPCTurn(Player npc, ArrayList<Player> players, EventManager eventManager) {
+
+    public static void handleNPCTurn(Player NPC, ArrayList<Player> players,
+                                     EventManager eventManager, TurnHandler turnHandler, GameInputHandler inputHandler) {
         Random random = new Random();
-        if (npc.hasItems() && random.nextInt(4) == 1) {
-            List<Item> items = npc.getItems();
+        if (NPC.hasItems() && random.nextInt(4) == 1) {
+            List<Item> items = NPC.getItems();
             Item item = items.get(random.nextInt(items.size()));
-            item.use(npc);
+            item.use(NPC);
         } else {
-            eventManager.generateEvent(players, npc.getTag());
+            //TODO: Passing NPC.getTag() will give errors in the future, 80%. If there's out of bound, this is where it comes from.
+            eventManager.generateEvent(players, NPC.getTag(), turnHandler, inputHandler);
         }
     }
 }
