@@ -194,7 +194,6 @@ public class Player {
     }
 
     public void replaceWeapon(Weapon weapon) {
-        weapons.remove(weapon);
         weapons.add(weapon);
     }
 
