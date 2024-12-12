@@ -135,9 +135,13 @@ public final class AppConstants {
         StringBuilder stringBuilder = new StringBuilder();
 
         int last = 0;
-        for (int i = 1; i <= MAX_WEAPONS; i++) {
-            stringBuilder.append(i).append(". " + weapons.get(i) + displayWeaponStats(weapons.get(i)) + "\n");
-            last = i;
+        for (int i = 0; i < weapons.size(); i++) {
+            stringBuilder.append(i+1).append(". "+ displayWeaponStats(weapons.get(i)) + "\n");
+            last = i+1;
+        }
+        
+        if(weapons.isEmpty()) {
+        	return "No weapons available!!";
         }
 
         return """
