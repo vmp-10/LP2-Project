@@ -15,6 +15,7 @@ public class EventManager {
         int event = random.nextInt(0, 100); // Generate a number from 0 to 99
 
         /*
+        TODO: Create a "you get shot at" event -> Chance to actually get hit, you get prompted to fight or escape
             Event probabilities:
             - 5% (0-4): Drop lands nearby
             - 25% (5-29): Out of safe zone

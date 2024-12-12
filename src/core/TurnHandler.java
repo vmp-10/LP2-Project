@@ -26,7 +26,7 @@ public class TurnHandler {
 	            System.out.println();
 	            System.out.println(AppConstants.createBox(players.size() + " players remaining", 50));
 	            System.out.println(AppConstants.createBox(AppConstants.displayPlayerStats(human), 50));
-	            System.out.println(AppConstants.createBox(AppConstants.displayWeapons(human), 50));
+	            System.out.println(AppConstants.createBox(AppConstants.displayWeapon(human), 50));
 
 	            System.out.println("Press Enter to continue... ");
 	            String input = scanner.nextLine();
@@ -71,18 +71,15 @@ public class TurnHandler {
 		}
 	}
 
-
 	public static void handleNPCTurn(Player NPC, ArrayList<Player> players, EventManager eventManager,
-			TurnHandler turnHandler, GameInputHandler inputHandler) {
+			TurnHandler turnHandler, GameInputHandler inputHandler, int index) {
 		Random random = new Random();
 		if (NPC.hasItems() && random.nextInt(4) == 1) {
 			List<Item> items = NPC.getItems();
 			Item item = items.get(random.nextInt(items.size()));
 			item.use(NPC);
 		} else {
-			// TODO: Passing NPC.getTag() will give errors in the future, 80%. If there's
-			// out of bound, this is where it comes from.
-			eventManager.generateEvent(players, NPC.getTag(), turnHandler, inputHandler);
+			eventManager.generateEvent(players, index, turnHandler, inputHandler);
 		}
 	}
 }

@@ -14,17 +14,33 @@ public class PlayerManager {
         this.players = new ArrayList<>();
     }
 
+    public void initializeDebugPlayers(int numPlayers, Player chosenPlayer) {
+        players.clear(); // Reset players list
+
+        for (int i = 0; i < numPlayers; i++) {
+            if (i == 0) {
+                players.add(chosenPlayer); // Add the user's chosen character in index[0]
+                chosenPlayer.setTag(0);
+            } else {
+                Player randomPlayer = new Player("DEBUG", 10, 20, 50, 0.1);
+                players.add(randomPlayer);
+                players.get(i).setTag(i);
+            }
+            players.get(i).setWeapon(Objects.DEFAULT_RANGE);
+        }
+    }
+
     public void initializePlayers(int numPlayers, Player chosenPlayer, String difficulty) {
         players.clear(); // Reset players list
         generatePlayers(numPlayers, chosenPlayer, difficulty);
     }
 
-    private void generatePlayers(int numNPCs, Player chosenPlayer, String difficulty) {
+    private void generatePlayers(int numPlayers, Player chosenPlayer, String difficulty) {
         Random random = new Random();
         List<Player> availablePlayers = Player.preMadePlayers.get(difficulty);
 
 
-        for (int i = 0; i < numNPCs; i++) {
+        for (int i = 0; i < numPlayers; i++) {
             if (i == 0) {
                 players.add(chosenPlayer); // Add the user's chosen character in index[0]
                 chosenPlayer.setTag(0);
@@ -34,8 +50,7 @@ public class PlayerManager {
                 players.add(randomPlayer);
                 players.get(i).setTag(i);
             }
-            players.get(i).addWeapon(Objects.DEFAULT_MELEE);
-            players.get(i).addWeapon(Objects.DEFAULT_RANGE);
+            players.get(i).setWeapon(Objects.DEFAULT_RANGE);
         }
     }
 

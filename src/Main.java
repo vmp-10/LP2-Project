@@ -80,11 +80,12 @@ public class Main {
 
         if (!confirmation) {
             System.out.println("Game setup canceled. Going back to main menu.");
-            return;  
+            return;
         }
 
         // Initialize players
-        playerManager.initializePlayers(numPlayers, human, difficulty);
+        //playerManager.initializePlayers(numPlayers, human, difficulty);
+        playerManager.initializeDebugPlayers(numPlayers, human);
 
         runGameLoop(playerManager, scanner, turnHandler, eventManager, inputHandler);
 
@@ -92,19 +93,41 @@ public class Main {
     }
 
     private static void runGameLoop(PlayerManager playerManager, Scanner scanner,
-                                    TurnHandler turnHandler, EventManager eventManager,GameInputHandler inputHandler) {
+                                    TurnHandler turnHandler, EventManager eventManager, GameInputHandler inputHandler) {
         boolean gameRunning = true;
 
         ArrayList<Player> players = playerManager.getPlayers();
+        List<Player> playersToRemove = new ArrayList<>();
+
 
         while (gameRunning) {
             for (int i = 0; i < players.size(); i++) {
                 Player currentPlayer = players.get(i);
+                System.out.println("[DEBUG] TAG: " + currentPlayer.getTag() + ", HP: " + currentPlayer.getHealth());
+
+                // If the player is dead, mark them for removal
+                if (!currentPlayer.isAlive()) {
+                    playersToRemove.add(currentPlayer);
+                    continue; // Skip iteration
+                }
+
                 if (currentPlayer.getTag() == 0) {
                     turnHandler.handleHumanTurn(currentPlayer, players, scanner, eventManager, turnHandler, inputHandler);
                 } else {
-                    turnHandler.handleNPCTurn(currentPlayer, players, eventManager, turnHandler, inputHandler);
+                    turnHandler.handleNPCTurn(currentPlayer, players, eventManager, turnHandler, inputHandler, i);
                 }
+
+                //Checks if human player is dead and displays a game over screen.
+                if (currentPlayer.getTag() == 0 && !currentPlayer.isAlive()) {
+                    String prompt = AppConstants.createBox(AppConstants.createSelection("You have died, do you want to see who wins [y/n]"), 35);
+                    boolean choice = inputHandler.getYesNoInput(prompt, scanner);
+                    if (!choice) {
+                        break;
+                    }
+                }
+
+                // Remove all dead players from the list
+                players.removeAll(playersToRemove);
 
                 if (players.size() == 1) {
                     gameRunning = false;
@@ -115,7 +138,10 @@ public class Main {
     }
 
     private static void announceWinner(Player winner) {
-        System.out.println(AppConstants.createBox("Winner is player " + winner.getTag() + "!", 25));
+        if (winner.getTag() == 0) {
+            System.out.println(AppConstants.createBox("You have won, congrats!", 35));
+        }
+        System.out.println(AppConstants.createBox("Winner is player " + winner.getTag() + "!", 35));
     }
 
     private static void loadGame() {

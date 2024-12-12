@@ -1,7 +1,6 @@
 package characters;
 
 import common.AppConstants;
-import tools.Defense;
 import tools.Item;
 import tools.Weapon;
 
@@ -14,12 +13,18 @@ public class Player {
     protected String name;
     protected int health;
     protected int shield;
+
+    //These to limit the player's health to their initial value.
+    protected int maxHealth;
+    protected int maxShield;
+    protected int maxStamina;
+
     protected int stamina;
     protected double strength;
 
     protected int tag;
     protected List<Item> items;
-    protected List<Weapon> weapons;
+    protected Weapon weapon;
 
     // HashMap for pre-made players categorized by difficulty
     public static final Map<String, List<Player>> preMadePlayers = new HashMap<>();
@@ -53,17 +58,20 @@ public class Player {
         ));
     }
 
-    public Player(String name, int health, int shield, int stamina, double strength, List<Item> items, List<Weapon> weapons, int tag) {
+    public Player(String name, int health, int shield, int stamina, double strength, List<Item> items, Weapon weapon, int tag) {
         this.name = name;
         this.health = health;
+        this.maxHealth = health;
+        this.maxShield = shield;
+        this.maxStamina = stamina;
         this.shield = shield;
         this.stamina = stamina;
         this.strength = strength;
         this.tag = tag;
+        this.weapon = weapon;
 
-        // Initialize items and weapons to new lists if null, otherwise copy the existing lists
+        // Initialize items to new lists if null else copy the existing lists
         this.items = (items == null) ? new ArrayList<>() : new ArrayList<>(items);
-        this.weapons = (weapons == null) ? new ArrayList<>() : new ArrayList<>(weapons);
     }
 
     public Player(String name, int health, int shield, int stamina, double strength) {
@@ -73,17 +81,20 @@ public class Player {
     public Player(Player other) {
         this.name = other.name;
         this.health = other.health;
+        this.maxHealth = other.health;
+        this.maxShield = other.shield;
+        this.maxStamina = other.stamina;
         this.shield = other.shield;
         this.stamina = other.stamina;
         this.strength = other.strength;
         this.tag = other.tag;
         this.items = new ArrayList<>(other.items);
-        this.weapons = new ArrayList<>(other.weapons);
+        this.weapon = other.weapon;
     }
 
     public void setHealth(int health) {
-        if (health > 150) {
-            health = 150;
+        if (health > maxHealth) {
+            health = maxHealth;
         } else if (health < 0) {
             health = 0;
         }
@@ -91,8 +102,8 @@ public class Player {
     }
 
     public void setShield(int shield) {
-        if (shield > 150) {
-            shield = 150;
+        if (shield > maxShield) {
+            shield = maxShield;
         } else if (shield < 0) {
             shield = 0;
         }
@@ -100,12 +111,16 @@ public class Player {
     }
 
     public void setStamina(int stamina) {
-        if (stamina > 150) {
-            stamina = 150;
+        if (stamina > maxStamina) {
+            stamina = maxStamina;
         } else if (stamina < 0) {
             stamina = 0;
         }
         this.stamina = stamina;
+    }
+
+    public void setWeapon(Weapon weapon) {
+        this.weapon = weapon;
     }
 
     public void setTag(int tag) {
@@ -169,32 +184,8 @@ public class Player {
         }
     }
 
-    public void removeWeapon(int i) {
-        weapons.remove(i);
-    }
-
-    public Weapon getWeapon(int i) {
-        return weapons.get(i);
-    }
-
-    public List<Weapon> getWeapons() {
-        return weapons;
-    }
-
-    public void removeWeapon(Weapon weapon) {
-        weapons.remove(weapon);
-    }
-
-    public void addWeapon(Weapon weapon) {
-        if (weapons.size() < AppConstants.MAX_WEAPONS) {
-            weapons.add(weapon);
-        } else {
-            replaceWeapon(weapon);
-        }
-    }
-
-    public void replaceWeapon(Weapon weapon) {
-        weapons.add(weapon);
+    public Weapon getWeapon() {
+        return weapon;
     }
 
     public void takeDamage(int damage, boolean isHuman) {
@@ -207,38 +198,33 @@ public class Player {
             setShield(shield);
 
             if (isHuman) {
-                System.out.println("Player's armor absorbed " + Math.min(effectiveDamage, previousArmor) + " damage.");
+                System.out.println(" -> Player's armor absorbed " + Math.min(effectiveDamage, previousArmor) + " damage.");
             }
         } else {
             health -= (int) effectiveDamage;
             setHealth(health);
 
             if (isHuman) {
-                System.out.println("Player takes " + effectiveDamage + " damage.");
+                System.out.println(" -> Player takes " + effectiveDamage + " damage.");
             }
         }
     }
 
     public void takeStormDamage(int damage, boolean isHuman) {
-        double effectiveDamage = damage * strength;
-
-        health -= (int) effectiveDamage;
+        health -= damage;
         setHealth(health);
 
         if (isHuman) {
-            System.out.println("Player takes " + effectiveDamage + " damage.");
+            System.out.println(" -> Player takes " + damage + " damage.");
         }
     }
 
     public void attack(Player target, boolean isHuman) {
-        Weapon equippedWeapon = weapons.getFirst();
-
-        int damage = equippedWeapon.getDamage(this);
+        int damage = weapon.getDamage(this);
 
         if (isHuman) {
-            System.out.println(name + " attacks Player " + target.getTag() + " with " + equippedWeapon.getName() + " for " + damage + " damage!");
+            System.out.println(" -> " + name + " attacks Player " + target.getTag() + " with " + weapon.getName() + " for " + damage + " damage!");
         }
-
 
         target.takeDamage(damage, isHuman);
     }
