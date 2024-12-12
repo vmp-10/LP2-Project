@@ -29,5 +29,6 @@ public class Potion extends Item {
                 System.out.println("You drank a " + name + " potion and restore " + effectValue + " stamina.");
             }
         }
+        player.removeItem(this);
     }
 }
