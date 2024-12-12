@@ -6,7 +6,6 @@ import tools.*;
 import tools.Objects;
 
 import java.util.*;
-import java.util.Scanner;
 
 //Verify if player or NPC, if NPC, no prints nor inputs allowed -> FIXED. Replaced isHuman() with getTag, if tag == 0 player is Human.
 public class Events {
@@ -120,29 +119,57 @@ public class Events {
             player2.attack(player1, true); //Couldn't escape, takes tamage
         }
     }
+    
+    public static void handleHumanWeaponUsage(Player human, Scanner scanner) { //useful for selecting which weapon the player want to switch with the new one
+	    List<Weapon> weapons = human.getWeapons();
+	    System.out.print(AppConstants.displayWeaponsChoice(weapons));
+
+	    int choice;
+	    while (true) {
+	        try {
+	            choice = Integer.parseInt(scanner.nextLine());
+	            if (choice >= 1 && choice <= weapons.size()) {
+	                System.out.println("Removing weapon: " + weapons.get(choice - 1).getName());
+	                human.removeWeapon(weapons.get(choice-1)); 
+	                break;
+	            } else if (choice == weapons.size() + 1) {
+	                System.out.println("No weapon removed.");
+	                break;
+	            }
+	            System.out.println("Invalid choice. Please try again.");
+	        } catch (NumberFormatException e) {
+	            System.out.println("Invalid input. Please enter a valid number.");
+	        }
+	    }
+	}
 
     public static void weaponFound(Player player, TurnHandler turnHandler, GameInputHandler inputHandler) {
         Weapon weapon = chooseWeapon();
-        Weapon currentWeapon = player.getWeapon(0);
-
+        
+        Scanner scanner = new Scanner(System.in);
+        
         if (player.getTag() == 0) {
-            Scanner scanner = new Scanner(System.in);
-
             boolean pickWeapon = inputHandler.getYesNoInput(AppConstants
-                    .createSelection("You found a " + weapon.getName() + ", do you want to pick it up [y/n]: "), scanner);
+                    .createSelection("You found a " + weapon.getName() + ", do you want to pick it up [y/n]: "), new Scanner(System.in));
+           
             if (pickWeapon) {
-                System.out.println(AppConstants.displayWeaponsChoice(player.getWeapons()));
+            	handleHumanWeaponUsage(player, scanner);
                 player.addWeapon(weapon);
                 System.out.println("The weapon " + weapon.getName() + " was added to the inventory");
+            } else {
+                System.out.println("Weapon not picked.");
             }
         } else {
             if (random.nextBoolean()) {
                 player.addWeapon(weapon);
+               
             } else {
                 allQuiet(player, turnHandler, inputHandler);
+               
             }
         }
     }
+
 
     private static Weapon chooseWeapon() {
         int percentage = random.nextInt(101);
