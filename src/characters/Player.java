@@ -36,25 +36,25 @@ public class Player {
 
     private static void createPreMadePlayers() {
         preMadePlayers.put("Easy", List.of(
-                new Player("Trump", 100, 150, 100, 0.9),
-                new Player("Bush", 100, 100, 150, 0.9),
-                new Player("Carter", 100, 120, 130, 0.85),
-                new Player("Ford", 100, 140, 110, 0.88)
+                new Player("Trump", 50, 40, 50, 0.9),
+                new Player("Bush", 50, 30, 45, 0.9),
+                new Player("Carter", 45, 35, 40, 0.85),
+                new Player("Ford", 48, 38, 35, 0.88)
         ));
         preMadePlayers.put("Normal", List.of(
-                new Player("Jamal", 100, 100, 175, 0.8),
-                new Player("Barack", 100, 120, 125, 0.9),
-                new Player("Clinton", 90, 110, 150, 0.83),
-                new Player("Franklin", 95, 115, 140, 0.85)
+                new Player("Jamal", 40, 30, 50, 0.8),
+                new Player("Barack", 45, 35, 40, 0.9),
+                new Player("Clinton", 38, 32, 45, 0.83),
+                new Player("Franklin", 42, 33, 40, 0.85)
         ));
         preMadePlayers.put("Hard", List.of(
-                new Player("Kamala", 75, 120, 100, 0.7),
-                new Player("Lincoln", 75, 100, 80, 0.6),
-                new Player("Roosevelt", 80, 110, 90, 0.65),
-                new Player("Jackson", 70, 95, 110, 0.68)
+                new Player("Kamala", 30, 35, 25, 0.7),
+                new Player("Lincoln", 28, 25, 20, 0.6),
+                new Player("Roosevelt", 32, 30, 22, 0.65),
+                new Player("Jackson", 27, 24, 28, 0.68)
         ));
         preMadePlayers.put("Joe Must Die", List.of(
-                new Player("Joe", 50, 95, 50, 0.5)
+                new Player("Joe", 15, 20, 15, 0.5)
         ));
     }
 
