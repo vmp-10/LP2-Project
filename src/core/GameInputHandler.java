@@ -3,34 +3,32 @@ package core;
 import characters.Player;
 import common.AppConstants;
 
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
 public class GameInputHandler {
-    private Scanner scanner;
+    private static final int MIN_NPC_PLAYERS = 50;
+    private static final int MAX_NPC_PLAYERS = 150;
 
-    private static final int MIN_PLAYERS = 50;
-    private static final int MAX_PLAYERS = 150;
+    private static final int MIN_PLAYERS = 1;
+    private static final int MAX_PLAYERS = 4;
 
     private static final String[] DIFFICULTIES = {"Easy", "Normal", "Hard", "Joe Must Die"};
 
 
-    public GameInputHandler(Scanner scanner) {
-        this.scanner = scanner;
-    }
+    public GameInputHandler() {
 
-    public Scanner getScanner() {
-        return scanner;
     }
 
     public static int promptForPlayers(Scanner scanner) {
         int numPlayers;
         while (true) {
-            System.out.print(AppConstants.createSelection("Choose number of players between " + MIN_PLAYERS + " and " + MAX_PLAYERS + ": "));
+            System.out.print(AppConstants.createSelection("Choose number of players between " + MIN_NPC_PLAYERS + " and " + MAX_NPC_PLAYERS + ": "));
             try {
                 numPlayers = Integer.parseInt(scanner.nextLine());
-                if (numPlayers >= MIN_PLAYERS && numPlayers <= MAX_PLAYERS) {
+                if (numPlayers >= MIN_NPC_PLAYERS && numPlayers <= MAX_NPC_PLAYERS) {
                     break;
                 }
                 System.out.println("Invalid input. Please try again.: ");
@@ -59,23 +57,30 @@ public class GameInputHandler {
         }
     }
 
-    public static Player promptForCharacter(Scanner scanner, String difficulty) {
+    public static List<Player> promptForCharacter(Scanner scanner, String difficulty, int numHumanPlayers) {
         List<Player> availablePlayers = Player.preMadePlayers.get(difficulty);
         int choice;
-        while (true) {
-            System.out.print(AppConstants.createHeader("Choose character: "));
-            System.out.print(AppConstants.createCharacterString(difficulty));
 
-            try {
-                choice = Integer.parseInt(scanner.nextLine());
-                if (choice > 0 && choice <= availablePlayers.size()) {
-                    return availablePlayers.get(choice - 1);
+        List<Player> players = new ArrayList<>();
+        for (int i = 0; i < numHumanPlayers; i++) {
+            while (true) {
+                System.out.print(AppConstants.createHeader("Choose character for player "+ i + ": "));
+                System.out.print(AppConstants.createCharacterString(difficulty));
+
+                try {
+                    choice = Integer.parseInt(scanner.nextLine());
+                    if (choice > 0 && choice <= availablePlayers.size()) {
+                        players.add(availablePlayers.get(choice - 1));
+                        break;
+                    }
+                    System.out.println("Invalid input. Please try again: ");
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a valid number: ");
                 }
-                System.out.println("Invalid input. Please try again: ");
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a valid number: ");
             }
         }
+
+        return players;
     }
 
     public static boolean getGameConfirmation(Scanner scanner) {
@@ -98,5 +103,22 @@ public class GameInputHandler {
                 System.out.println("Input error: Please enter a valid [y/n] response.");
             }
         }
+    }
+
+    public int promptForHumans(Scanner scanner) {
+        int numPlayers;
+        while (true) {
+            System.out.print(AppConstants.createSelection("Choose number of players between " + MIN_PLAYERS + " and " + +MAX_PLAYERS + ": "));
+            try {
+                numPlayers = Integer.parseInt(scanner.nextLine());
+                if (numPlayers >= MIN_PLAYERS && numPlayers <= MAX_PLAYERS) {
+                    break;
+                }
+                System.out.println("Invalid input. Please try again.: ");
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number: ");
+            }
+        }
+        return numPlayers;
     }
 }

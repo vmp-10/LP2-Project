@@ -15,8 +15,8 @@ public class Events {
 
     }
 
-    public static void allQuiet(Player player, TurnHandler turnHandler, GameInputHandler inputHandler) {
-        if (player.getTag() == 0) {
+    public static void allQuiet(Player player, TurnHandler turnHandler, GameInputHandler inputHandler, PlayerManager playerManager) {
+        if (player.getTag() > 0 && player.getTag() < playerManager.getNumHumanPlayers()) {
             Scanner scanner = new Scanner(System.in);
             System.out.println("Nothing is happening right now.");
 
@@ -31,39 +31,41 @@ public class Events {
         }
     }
 
-    public static void dropLandedNearby(Player player, TurnHandler turnHandler, GameInputHandler inputHandler) {
-        if (player.getTag() == 0) {
+    public static void dropLandedNearby(Player player, TurnHandler turnHandler, GameInputHandler inputHandler, PlayerManager playerManager) {
+        if (player.getTag() > 0 && player.getTag() < playerManager.getNumHumanPlayers()) {
             Scanner scanner = new Scanner(System.in);
 
-            boolean lootDrop = inputHandler.getYesNoInput(AppConstants.createSelection("A drop has landed nearby, do you want to loot it (Keep in mind it can be trapped) [y/n]: "), scanner);
+            boolean lootDrop = inputHandler
+                    .getYesNoInput(AppConstants
+                            .createSelection("A drop has landed nearby, do you want to loot it (Keep in mind it can be trapped) [y/n]: "), scanner);
             if (lootDrop) {
                 switch (random.nextInt(3)) {
-                    case 0 -> weaponFound(player, turnHandler, inputHandler);
-                    case 1 -> itemFound(player, turnHandler, inputHandler);
-                    case 2 -> dropTrapFound(player);
+                    case 0 -> weaponFound(player, turnHandler, inputHandler, playerManager);
+                    case 1 -> itemFound(player, turnHandler, inputHandler, playerManager);
+                    case 2 -> dropTrapFound(player, playerManager);
                 }
             } else {
                 System.out.println("You ran away.");
             }
         } else {
             switch (random.nextInt(0, 3)) {
-                case 0 -> weaponFound(player, turnHandler, inputHandler);
-                case 1 -> itemFound(player, turnHandler, inputHandler);
-                case 2 -> dropTrapFound(player);
-                case 3 -> allQuiet(player, turnHandler, inputHandler);
+                case 0 -> weaponFound(player, turnHandler, inputHandler, playerManager);
+                case 1 -> itemFound(player, turnHandler, inputHandler, playerManager);
+                case 2 -> dropTrapFound(player, playerManager);
+                case 3 -> allQuiet(player, turnHandler, inputHandler, playerManager);
             }
         }
     }
 
     //The drop was rigged with a trap
-    private static void dropTrapFound(Player player) {
+    private static void dropTrapFound(Player player, PlayerManager playerManager) {
         boolean tookDamage = false;
 
         if (random.nextInt(0, 100) < 25) {
             tookDamage = true;
         }
 
-        if (player.getTag() == 0) {
+        if (player.getTag() > 0 && player.getTag() < playerManager.getNumHumanPlayers()) {
             if (tookDamage) {
                 System.out.println("You opened the drop but there was a trap.");
                 player.takeDamage(10, true);
@@ -75,29 +77,29 @@ public class Events {
         }
     }
 
-    public static void enemyFound(Player player1, Player player2, GameInputHandler inputHandler) {
-        if (player1.getTag() == 0) {
+    public static void enemyFound(Player player1, Player player2, GameInputHandler inputHandler, PlayerManager playerManager) {
+        if (player1.getTag() > 0 && player1.getTag() < playerManager.getNumHumanPlayers()) {
             Scanner scanner = new Scanner(System.in);
 
             boolean fight = inputHandler
                     .getYesNoInput(AppConstants
                             .createSelection("You found a player, do you want to fight [y/n]: "), scanner);
             if (fight) {
-                fight(player1, player2);
+                fight(player1, player2, playerManager);
             } else {
                 escape(player1, player2, true);
             }
         } else {
             if (random.nextInt(0, 100) < 25) {
-                fight(player1, player2);
+                fight(player1, player2, playerManager);
             } else {
                 escape(player1, player2, false);
             }
         }
     }
 
-    private static void fight(Player player1, Player player2) {
-        if (player1.getTag() == 0) {
+    private static void fight(Player player1, Player player2, PlayerManager playerManager) {
+        if (player1.getTag() > 0 && player1.getTag() < playerManager.getNumHumanPlayers()) {
             player1.attack(player2, true);
         } else {
             player1.attack(player2, false);
@@ -106,7 +108,7 @@ public class Events {
 
     // You have a chance to be seen by the other player and be attacked
     private static void escape(Player player1, Player player2, boolean isHuman) {
-        int staminaLoss = random.nextInt(10);
+        int staminaLoss = random.nextInt(5, 15);
         int stamina = player1.getStamina();
 
         if (isHuman) {
@@ -120,10 +122,10 @@ public class Events {
         }
     }
 
-    public static void weaponFound(Player player, TurnHandler turnHandler, GameInputHandler inputHandler) {
+    public static void weaponFound(Player player, TurnHandler turnHandler, GameInputHandler inputHandler, PlayerManager playerManager) {
         Weapon newWeapon = chooseWeapon();
 
-        if (player.getTag() == 0) {
+        if (player.getTag() > 0 && player.getTag() < playerManager.getNumHumanPlayers()) {
             Scanner scanner = new Scanner(System.in);
 
             boolean pickWeapon = inputHandler.getYesNoInput(
@@ -139,11 +141,10 @@ public class Events {
             if (random.nextInt(0,100)< 30) {
                 player.setWeapon(newWeapon);
             } else {
-                allQuiet(player, turnHandler, inputHandler);
+                allQuiet(player, turnHandler, inputHandler, playerManager);
             }
         }
     }
-
 
     private static Weapon chooseWeapon() {
         int percentage = random.nextInt(101);
@@ -165,7 +166,7 @@ public class Events {
         return weapon;
     }
 
-    public static void itemFound(Player player, TurnHandler turnHandler, GameInputHandler inputHandler) {
+    public static void itemFound(Player player, TurnHandler turnHandler, GameInputHandler inputHandler, PlayerManager playerManager) {
         // Get all items available
         List<Item> items = new ArrayList<>();
         items.addAll(Objects.POTIONS);
@@ -175,7 +176,7 @@ public class Events {
 
         Item item = items.get(random.nextInt(items.size()));
 
-        if (player.getTag() == 0) {
+        if (player.getTag() > 0 && player.getTag() < playerManager.getNumHumanPlayers()) {
             Scanner scanner = new Scanner(System.in);
 
             boolean pickItem = inputHandler.getYesNoInput(AppConstants
@@ -189,13 +190,13 @@ public class Events {
             if (random.nextBoolean()) {
                 player.addItem(item);
             } else {
-                allQuiet(player, turnHandler, inputHandler);
+                allQuiet(player, turnHandler, inputHandler, playerManager);
             }
         }
     }
 
     private static Potion choosePotion() {
-        int percentage = random.nextInt(101);
+        int percentage = random.nextInt(0, 100);
         List<Potion> potions = new ArrayList<>();
 
         if (percentage <= Rarity.EPIC.getPercentage()) {
@@ -208,14 +209,14 @@ public class Events {
         return potion;
     }
 
-    public static void trapFound(Player player) {
+    public static void trapFound(Player player, PlayerManager playerManager) {
         boolean tookDamage = false;
 
         if (random.nextInt(0, 100) < 25) {
             tookDamage = true;
         }
 
-        if (player.getTag() == 0) {
+        if (player.getTag() > 0 && player.getTag() < playerManager.getNumHumanPlayers()) {
             if (tookDamage) {
                 System.out.println("You fell on a trap.");
                 player.takeDamage(15, true);
@@ -227,14 +228,14 @@ public class Events {
         }
     }
 
-    public static void outOfSafeZone(Player player) {
+    public static void outOfSafeZone(Player player, PlayerManager playerManager) {
         int chanceToOutrun = random.nextInt(0, 100);
         boolean escaped = false;
         if (chanceToOutrun < 25) {
             escaped = false;
         }
 
-        if (player.getTag() == 0) {
+        if (player.getTag() > 0 && player.getTag() < playerManager.getNumHumanPlayers()) {
             if (!escaped) {
                 System.out.println("You're in the storm, taking damage.");
                 player.takeStormDamage(5, true);

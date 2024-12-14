@@ -10,7 +10,8 @@ public class EventManager {
 
     }
 
-    public void generateEvent(ArrayList<Player> players, int index, TurnHandler turnHandler, GameInputHandler inputHandler) {
+    public void generateEvent(ArrayList<Player> players, int index,
+                              TurnHandler turnHandler, GameInputHandler inputHandler, PlayerManager playerManager) {
         Random random = new Random();
         int event = random.nextInt(0, 100); // Generate a number from 0 to 99
 
@@ -27,19 +28,19 @@ public class EventManager {
         */
 
         if (event < 5) {
-            Events.dropLandedNearby(players.get(index),turnHandler, inputHandler);
+            Events.dropLandedNearby(players.get(index),turnHandler, inputHandler, playerManager);
         } else if (event < 30) {
-            Events.outOfSafeZone(players.get(index));
+            Events.outOfSafeZone(players.get(index), playerManager);
         } else if (event < 40) {
-            Events.allQuiet(players.get(index), turnHandler, inputHandler);
+            Events.allQuiet(players.get(index), turnHandler, inputHandler, playerManager);
         } else if (event < 55) {
-            Events.enemyFound(players.get(index), players.get(random.nextInt(players.size())), inputHandler);
+            Events.enemyFound(players.get(index), players.get(random.nextInt(players.size())), inputHandler, playerManager);
         } else if (event < 70) {
-            Events.weaponFound(players.get(index), turnHandler, inputHandler);
+            Events.weaponFound(players.get(index), turnHandler, inputHandler, playerManager);
         } else if (event < 85) {
-            Events.itemFound(players.get(index), turnHandler, inputHandler);
+            Events.itemFound(players.get(index), turnHandler, inputHandler, playerManager);
         } else {
-            Events.trapFound(players.get(index));
+            Events.trapFound(players.get(index), playerManager);
         }
     }
 }

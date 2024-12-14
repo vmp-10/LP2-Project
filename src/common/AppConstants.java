@@ -199,4 +199,29 @@ public final class AppConstants {
 
     private AppConstants() {
     }
+
+    public static String displayGameOptions(int numHumanPlayers, int numPlayers, String difficulty, List<Player> playableCharacters) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(AppConstants.createHeader("You selected the following:"));
+        builder.append("-> Total Number of Playable Players: ").append(numHumanPlayers).append("\n");
+        builder.append("-> Total Number of Players: ").append(numPlayers).append("\n");
+        builder.append("-> Difficulty: ").append(difficulty).append("\n");
+        builder.append(AppConstants.displayCharacters(playableCharacters));
+
+        return builder.toString();
+    }
+
+
+    public static String displayCharacters(List<Player> playableCharacters) {
+        StringBuilder characterList = new StringBuilder();
+
+        int numCharacters = playableCharacters.size();
+        characterList.append("-> Chosen characters:\n");
+
+        for (int i = 0; i < numCharacters; i++) {
+            characterList.append("\t").append("-> Player " + i).append(": ").append(playableCharacters.get(i).getName()).append("\n");
+        }
+
+        return characterList.toString().trim();
+    }
 }

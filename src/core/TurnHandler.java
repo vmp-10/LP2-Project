@@ -5,10 +5,7 @@ import common.AppConstants;
 import tools.Item;
 import tools.Weapon;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class TurnHandler {
 	public TurnHandler() {
@@ -16,13 +13,13 @@ public class TurnHandler {
 	}
 
 	public static void handleHumanTurn(Player human, ArrayList<Player> players, Scanner scanner,
-	        EventManager eventManager, TurnHandler turnHandler, GameInputHandler inputHandler) {
+	        EventManager eventManager, TurnHandler turnHandler, GameInputHandler inputHandler, PlayerManager playerManager) {
 	    boolean inputInvalid = false;
 	   
 	    do {
 	        try {
 	            
-	            System.out.println(AppConstants.createBox("New round begins!", 50));
+	            System.out.println(AppConstants.createBox("Player "+ human.getTag() + "'s turn", 50));
 	            System.out.println();
 	            System.out.println(AppConstants.createBox(players.size() + " players remaining", 50));
 	            System.out.println(AppConstants.createBox(AppConstants.displayPlayerStats(human), 50));
@@ -38,14 +35,13 @@ public class TurnHandler {
 	                    handleHumanItemUsage(human, scanner);
 	                }
 
-	                eventManager.generateEvent(players, human.getTag(), turnHandler, inputHandler);
-	            
-
+	                eventManager.generateEvent(players, human.getTag(), turnHandler, inputHandler, playerManager);
 	            } else {
 	                System.out.println("Press Enter to continue...");
 	            }
 	        } catch (Exception e) {
-	            System.out.println("Press Enter to continue... ");
+	            e.printStackTrace();
+				break;
 	        }
 	    } while (!inputInvalid);
 	}
@@ -72,14 +68,14 @@ public class TurnHandler {
 	}
 
 	public static void handleNPCTurn(Player NPC, ArrayList<Player> players, EventManager eventManager,
-			TurnHandler turnHandler, GameInputHandler inputHandler, int index) {
+			TurnHandler turnHandler, GameInputHandler inputHandler, int index, PlayerManager playerManager) {
 		Random random = new Random();
 		if (NPC.hasItems() && random.nextInt(4) == 1) {
 			List<Item> items = NPC.getItems();
 			Item item = items.get(random.nextInt(items.size()));
 			item.use(NPC);
 		} else {
-			eventManager.generateEvent(players, index, turnHandler, inputHandler);
+			eventManager.generateEvent(players, index, turnHandler, inputHandler, playerManager);
 		}
 	}
 }
