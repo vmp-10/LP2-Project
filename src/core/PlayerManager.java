@@ -26,9 +26,9 @@ public class PlayerManager {
     }
 
     public void initializePlayers(int numPlayers, List<Player> humanPlayers, String difficulty) {
-        players.clear(); // Reset players list
+        players.clear();        // Reset players list
         generatePlayers(numPlayers, humanPlayers, difficulty);
-        this.forFile = players;
+        this.forFile = players; // Players to display at the file, safe of editing
     }
 
     private void generatePlayers(int numPlayers, List<Player> humanPlayers, String difficulty) {

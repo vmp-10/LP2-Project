@@ -66,8 +66,8 @@ public class TurnHandler {
     public static void handleNPCTurn(Player player, EventManager eventManager,
                                      PlayerManager playerManager, LoggingManager loggingManager) {
         Random random = new Random();
-        //25% of using item if NPC has items
-        if (player.hasItems() && random.nextInt(0, 100) < 25) {
+        //30% of using item if NPC has items
+        if (player.hasItems() && random.nextInt(0, 100) < AppConstants.BOT_CHANCE_TO_USE_ITEM) {
             List<Item> items = player.getItems();
             Item item = items.get(random.nextInt(items.size()));
             item.use(player, playerManager);
