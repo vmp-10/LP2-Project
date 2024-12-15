@@ -9,6 +9,7 @@ import java.util.Random;
 
 public class PlayerManager {
     private final ArrayList<Player> players;
+    private ArrayList<Player> forFile;
     private int numHumanPlayers;
 
     public PlayerManager() {
@@ -27,6 +28,7 @@ public class PlayerManager {
     public void initializePlayers(int numPlayers, List<Player> humanPlayers, String difficulty) {
         players.clear(); // Reset players list
         generatePlayers(numPlayers, humanPlayers, difficulty);
+        this.forFile = players;
     }
 
     private void generatePlayers(int numPlayers, List<Player> humanPlayers, String difficulty) {
@@ -34,9 +36,11 @@ public class PlayerManager {
         List<Player> availablePlayers = Player.preMadePlayers.get(difficulty);
 
         for (int i = 0; i < numHumanPlayers; i++) {
-            Player current = humanPlayers.get(i);
-            players.add(current); // Add the user's chosen character in index[0]
-            current.setTag(i);
+            Player temp = humanPlayers.get(i);
+            Player current = new Player(temp);
+
+            players.add(current);
+            players.get(i).setTag(i);
 
             players.get(i).setWeapon(Objects.DEFAULT_RANGE);
         }
@@ -53,5 +57,22 @@ public class PlayerManager {
 
     public ArrayList<Player> getPlayers() {
         return players;
+    }
+
+    public ArrayList<Player> getPlayersForFile() {
+        return forFile;
+    }
+
+
+    public Player getRandomPlayer() {
+        return players.get(new Random().nextInt(players.size()));
+    }
+
+    public void removePlayers(List<Player> playersToRemove) {
+        players.removeAll(playersToRemove);
+    }
+
+    public boolean isHuman(Player player) {
+        return player.getTag() > 0 && player.getTag() <= numHumanPlayers;
     }
 }

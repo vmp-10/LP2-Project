@@ -1,6 +1,7 @@
 package tools;
 
 import characters.Player;
+import core.PlayerManager;
 
 public abstract class Item {
     protected String name;
@@ -13,13 +14,9 @@ public abstract class Item {
         this.rarity = rarity;
     }
 
-
-    public String getType() {
-        return type;
-    }
     public String getName() {
         return name;
     }
 
-    public abstract void use(Player player);
+    public abstract void use(Player player, PlayerManager playerManager);
 }

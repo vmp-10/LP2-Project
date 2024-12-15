@@ -1,12 +1,15 @@
 package tools;
 
 import characters.Player;
+import core.PlayerManager;
 
 public class Potion extends Item {
-    private final String effect;
-    private final int effectValue;
+    //Potions will restore a percentage of the Player's HP
 
-    public Potion(String name, Rarity rarity, String effect, int effectValue) {
+    private final String effect;
+    private final double effectValue;
+
+    public Potion(String name, Rarity rarity, String effect, double effectValue) {
         super(name, "Potion", String.valueOf(rarity));
         this.effect = effect;
         this.effectValue = effectValue;
@@ -17,16 +20,20 @@ public class Potion extends Item {
     }
 
     @Override
-    public void use(Player player) {
+    public void use(Player player, PlayerManager playerManager) {
         if (effect.equalsIgnoreCase("Health")) {
-            player.setHealth(player.getHealth() + effectValue);
-            if (player.getTag() == 0) {
-                System.out.println("You drank a " + name + " potion and restore " + effectValue + " health.");
+            int restore = (int) (player.getMaxHealth() * effectValue);
+
+            player.setHealth(player.getHealth() + restore);
+            if (playerManager.isHuman(player)) {
+                System.out.println("You drank a " + name + " potion and restored " + restore + " health.");
             }
         } else if (effect.equalsIgnoreCase("Stamina")) {
-            player.setStamina(player.getStamina() + effectValue);
-            if (player.getTag() == 0) {
-                System.out.println("You drank a " + name + " potion and restore " + effectValue + " stamina.");
+            int restore = (int) (player.getMaxStamina() * effectValue);
+
+            player.setStamina(player.getStamina() + restore);
+            if (playerManager.isHuman(player)) {
+                System.out.println("You drank a " + name + " potion and restored " + restore + " stamina.");
             }
         }
         player.removeItem(this);

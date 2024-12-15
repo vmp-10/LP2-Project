@@ -4,25 +4,24 @@ import common.AppConstants;
 import tools.Item;
 import tools.Weapon;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Player {
-    protected String name;
+    //Identifiers
+    protected final String name;
+    protected int tag;
+
     protected int health;
     protected int shield;
+    protected int stamina;
+    protected final double strength; //How much damage the player can absorb
 
     //These to limit the player's health to their initial value.
-    protected int maxHealth;
-    protected int maxShield;
-    protected int maxStamina;
+    protected final int maxHealth;
+    protected final int maxShield;
+    protected final int maxStamina;
 
-    protected int stamina;
-    protected double strength;
-
-    protected int tag;
+    //Items that can be obtained throughout the game
     protected List<Item> items;
     protected Weapon weapon;
 
@@ -147,45 +146,68 @@ public class Player {
         return strength;
     }
 
-    public List<Item> getItems() {
-        return items;
+    public int getMaxHealth() {
+        return maxHealth;
     }
 
-    public Item getItem(int i) {
-        return items.get(i);
+    public int getMaxStamina() {
+        return maxStamina;
+    }
+
+    public List<Item> getItems() {
+        return items;
     }
 
     public int getTag() {
         return tag;
     }
 
-    public boolean isAlive() {
-        return health > 0;
+    public Weapon getWeapon() {
+        return weapon;
+    }
+
+    public boolean isDead() {
+        return health <= 0;
     }
 
     public boolean hasItems() {
         return !items.isEmpty();
     }
 
-    public void removeItem(int i) {
-        items.remove(i);
-    }
-
     public void removeItem(Item item) {
         items.remove(item);
     }
 
-    public void addItem(Item item) {
+    public void addItem(Item item, boolean isHuman) {
         if (items.size() < AppConstants.MAX_ITEMS) {
-            if (tag == 0) {
+            if (isHuman) {
                 System.out.println(item.getName() + " added to inventory.");
             }
             items.add(item);
-        }
-    }
+        } else {
+            if (isHuman && hasItems()) {
+                System.out.print(AppConstants.displayItemChoice(this));
 
-    public Weapon getWeapon() {
-        return weapon;
+                Scanner scanner = new Scanner(System.in);
+                int choice;
+
+                while (true) {
+                    try {
+                        choice = Integer.parseInt(scanner.nextLine());
+                        if (choice >= 1 && choice <= items.size()) {
+                            items.set(choice - 1, item);  // Replace the item at the chosen index
+                            System.out.println(item.getName() + " replaced the item at position " + choice);
+                            break;
+                        } else if (choice == items.size() + 1) {
+                            break;
+                        }
+                        System.out.println("Invalid choice. Please try again.");
+                    } catch (Exception e) {
+                        System.out.println("Invalid input. Please enter a valid number.");
+                    }
+                }
+            }
+        }
     }
 
     public void takeDamage(int damage, boolean isHuman) {
@@ -198,14 +220,14 @@ public class Player {
             setShield(shield);
 
             if (isHuman) {
-                System.out.println(" -> Player's armor absorbed " + Math.min(effectiveDamage, previousArmor) + " damage.");
+                System.out.println(" -> Player " + tag + "'s armor absorbed " + Math.min(effectiveDamage, previousArmor) + " damage.");
             }
         } else {
             health -= (int) effectiveDamage;
             setHealth(health);
 
             if (isHuman) {
-                System.out.println(" -> Player takes " + effectiveDamage + " damage.");
+                System.out.println(" -> Player " + tag + " takes " + effectiveDamage + " damage.");
             }
         }
     }
@@ -215,7 +237,7 @@ public class Player {
         setHealth(health);
 
         if (isHuman) {
-            System.out.println(" -> Player takes " + damage + " damage.");
+            System.out.println(" -> Player " + tag + " takes " + damage + " storm damage.");
         }
     }
 
@@ -227,5 +249,9 @@ public class Player {
         }
 
         target.takeDamage(damage, isHuman);
+    }
+
+    public boolean equals(Player obj) {
+        return this.tag ==  obj.tag;
     }
 }

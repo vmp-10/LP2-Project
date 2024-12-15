@@ -4,7 +4,6 @@ import characters.Player;
 import common.AppConstants;
 
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -32,7 +31,7 @@ public class GameInputHandler {
                     break;
                 }
                 System.out.println("Invalid input. Please try again.: ");
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
                 System.out.println("Invalid input. Please enter a valid number: ");
             }
         }
@@ -51,7 +50,7 @@ public class GameInputHandler {
                     return DIFFICULTIES[choice - 1];
                 }
                 System.out.println("Invalid input. Please try again: ");
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
                 System.out.println("Invalid input. Please enter a valid number: ");
             }
         }
@@ -74,7 +73,7 @@ public class GameInputHandler {
                         break;
                     }
                     System.out.println("Invalid input. Please try again: ");
-                } catch (NumberFormatException e) {
+                } catch (Exception e) {
                     System.out.println("Invalid input. Please enter a valid number: ");
                 }
             }
@@ -99,7 +98,7 @@ public class GameInputHandler {
 
                 // Handle invalid input case
                 System.out.println("Invalid input. Please enter [y/n]: ");
-            } catch (InputMismatchException e) {
+            } catch (Exception e) {
                 System.out.println("Input error: Please enter a valid [y/n] response.");
             }
         }
@@ -108,14 +107,14 @@ public class GameInputHandler {
     public int promptForHumans(Scanner scanner) {
         int numPlayers;
         while (true) {
-            System.out.print(AppConstants.createSelection("Choose number of players between " + MIN_PLAYERS + " and " + +MAX_PLAYERS + ": "));
+            System.out.print(AppConstants.createSelection("Choose number of players between " + MIN_PLAYERS + " and " + MAX_PLAYERS + ": "));
             try {
                 numPlayers = Integer.parseInt(scanner.nextLine());
                 if (numPlayers >= MIN_PLAYERS && numPlayers <= MAX_PLAYERS) {
                     break;
                 }
                 System.out.println("Invalid input. Please try again.: ");
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
                 System.out.println("Invalid input. Please enter a valid number: ");
             }
         }

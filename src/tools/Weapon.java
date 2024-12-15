@@ -1,8 +1,8 @@
-package tools;
+ package tools;
 
 import characters.Player;
+import core.PlayerManager;
 
-//Weapon is items[0]
 public class Weapon extends Item {
     private final int baseDamage;
 
@@ -16,16 +16,17 @@ public class Weapon extends Item {
     }
 
     public int getDamage(Player character) {
-        return (int) (baseDamage * character.getStrength());
+        return (int) (baseDamage + (baseDamage * (1 - character.getStrength())));
     }
 
     public String getRarity(){
         return rarity;
     }
 
+    //TODO: Offre please fix, idk wtf to do here.
     @Override
-    public void use(Player player) {
-        if (player.getTag() == 0) {
+    public void use(Player player, PlayerManager playerManager) {
+        if (playerManager.isHuman(player)) {
             System.out.println("You use " + name + ", dealing " + getDamage(player) + " damage.");
         }
     }
